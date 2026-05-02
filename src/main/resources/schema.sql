@@ -42,6 +42,7 @@ CREATE TABLE IF NOT EXISTS incomes (
     user_id      BIGINT       NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     income_type  VARCHAR(20)  NOT NULL DEFAULT 'EXTRA',
     source       VARCHAR(255) NOT NULL,
+    category     VARCHAR(100),
     amount       DECIMAL(10,2) NOT NULL,
     income_date  DATE,
     notes        TEXT,

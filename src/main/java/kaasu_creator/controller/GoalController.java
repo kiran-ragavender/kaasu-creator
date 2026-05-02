@@ -74,6 +74,21 @@ public class GoalController {
         return "redirect:/goal";
     }
 
+    @PostMapping("/goal/delete")
+    public String deleteGoal(Authentication authentication,
+                             @RequestParam Long goalId,
+                             RedirectAttributes redirectAttributes) {
+        Long userId = getUserId(authentication);
+        Goal goal = goalService.getGoalById(goalId);
+        if (goal == null || !goal.getUserId().equals(userId)) {
+            redirectAttributes.addFlashAttribute("error", "Goal not found.");
+            return "redirect:/goal";
+        }
+        goalService.deleteGoal(goalId);
+        redirectAttributes.addFlashAttribute("success", "Goal deleted.");
+        return "redirect:/goal";
+    }
+
     @GetMapping("/goal/view")
     public String viewGoal(Authentication authentication,
                            @RequestParam Long goalId, Model model) {
@@ -85,7 +100,7 @@ public class GoalController {
         model.addAttribute("goal", goal);
         model.addAttribute("roadmap", goalService.getRoadmap(goalId));
         model.addAttribute("progress", goalService.getProgress(goalId));
-        return "goal-detail";
+        return "goal";
     }
 
     private Long getUserId(Authentication authentication) {

@@ -116,6 +116,13 @@ public class GoalService {
     }
 
     /**
+     * Delete a goal and its roadmap (cascade handled by DB).
+     */
+    public void deleteGoal(Long goalId) {
+        goalDao.deleteById(goalId);
+    }
+
+    /**
      * Mark a roadmap week as completed.
      */
     public void completeWeek(Long roadmapId) {

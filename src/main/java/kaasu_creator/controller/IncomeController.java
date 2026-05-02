@@ -45,11 +45,7 @@ public class IncomeController {
 
     // ── GET /income ────────────────────────────────────────────────────────────
     @GetMapping("/income")
-    public String showIncome(
-            Authentication authentication,
-            Model model,
-            @RequestParam(required = false) String tab,
-            @RequestParam(required = false) Long selectedJobId) {
+    public String showIncome(Authentication authentication, Model model) {
 
         var userOptional = userDao.findByEmail(authentication.getName());
         if (userOptional.isEmpty()) {
@@ -59,144 +55,90 @@ public class IncomeController {
 
         Long userId = userOptional.get().getId();
 
-        // Jobs with aggregated totals (single LEFT JOIN query)
+        // Summary counts — lightweight calls, no heavy join needed here
         List<Job> jobs = jobService.getJobsWithSummary(userId);
-
-        // All work entries for history tab
         List<TimesheetEntry> allEntries = timesheetService.getEntriesByUser(userId);
 
-        // Extra income (kept for the optional extra section)
-        List<Income> extraIncomes = incomeService.getExtraIncomesByUser(userId);
-
-        // Overall totals for summary bar
+        // Timesheet aggregate totals for summary cards
         BigDecimal totalEarned = timesheetService.getTotalEarned(userId);
+
+        // Custom income — full list drives the history table on this page
+        List<Income> allCustomIncomes = incomeService.getIncomesByUser(userId);
+        BigDecimal totalCustomIncome  = incomeService.getTotalIncome(userId);
 
         model.addAttribute("jobs", jobs);
         model.addAttribute("allEntries", allEntries);
-        model.addAttribute("extraIncomes", extraIncomes);
         model.addAttribute("totalEarned", totalEarned);
-        model.addAttribute("selectedJobId", selectedJobId);
-
-        // activeTab comes from flash (redirect) OR URL param OR default
-        if (!model.containsAttribute("activeTab")) {
-            model.addAttribute("activeTab", tab != null ? tab : "jobs");
-        }
+        model.addAttribute("allCustomIncomes", allCustomIncomes);
+        model.addAttribute("totalCustomIncome", totalCustomIncome);
 
         return "income";
     }
 
-    // ── POST /income/job/save ──────────────────────────────────────────────────
-    @PostMapping("/income/job/save")
-    public String saveJob(
-            @RequestParam String jobName,
-            @RequestParam BigDecimal hourlyWage,
-            Authentication authentication,
-            RedirectAttributes redirectAttributes) {
-        try {
-            Long userId = getUserId(authentication);
-            Job job = new Job();
-            job.setUserId(userId);
-            job.setJobName(jobName.trim());
-            job.setHourlyWage(hourlyWage);
-            jobService.addJob(job);
-            redirectAttributes.addFlashAttribute("successMessage",
-                    "Job '" + jobName.trim() + "' added successfully!");
-            redirectAttributes.addFlashAttribute("activeTab", "jobs");
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage",
-                    "Error adding job: " + e.getMessage());
-        }
-        return "redirect:/income";
-    }
-
-    // ── POST /income/job/delete ────────────────────────────────────────────────
-    @PostMapping("/income/job/delete")
-    public String deleteJob(
-            @RequestParam Long jobId,
-            Authentication authentication,
-            RedirectAttributes redirectAttributes) {
-        try {
-            Long userId = getUserId(authentication);
-            var jobOpt = jobService.getJobByIdAndUser(jobId, userId);
-            if (jobOpt.isPresent()) {
-                jobService.deleteJob(jobId);
-                redirectAttributes.addFlashAttribute("successMessage", "Job deleted.");
-            } else {
-                redirectAttributes.addFlashAttribute("errorMessage", "Job not found.");
-            }
-            redirectAttributes.addFlashAttribute("activeTab", "jobs");
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage",
-                    "Error deleting job: " + e.getMessage());
-        }
-        return "redirect:/income";
-    }
-
-    // ── POST /income/work/save ─────────────────────────────────────────────────
-    @PostMapping("/income/work/save")
-    public String saveWorkEntry(
-            @RequestParam Long jobId,
-            @RequestParam String workDate,
-            @RequestParam BigDecimal hoursWorked,
+    // ── POST /income/custom/save ───────────────────────────────────────────────
+    @PostMapping("/income/custom/save")
+    public String saveCustomIncome(
+            @RequestParam String source,
+            @RequestParam(required = false) String category,
+            @RequestParam BigDecimal amount,
+            @RequestParam String incomeDate,
             @RequestParam(required = false) String notes,
             Authentication authentication,
             RedirectAttributes redirectAttributes) {
         try {
             Long userId = getUserId(authentication);
 
-            // Verify job belongs to this user
-            var jobOpt = jobService.getJobByIdAndUser(jobId, userId);
-            if (jobOpt.isEmpty()) {
-                redirectAttributes.addFlashAttribute("errorMessage", "Job not found.");
-                redirectAttributes.addFlashAttribute("activeTab", "log");
+            if (source == null || source.isBlank()) {
+                redirectAttributes.addFlashAttribute("errorMessage", "Income source/title is required.");
+                return "redirect:/income";
+            }
+            if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
+                redirectAttributes.addFlashAttribute("errorMessage", "Amount must be greater than zero.");
                 return "redirect:/income";
             }
 
-            TimesheetEntry entry = new TimesheetEntry();
-            entry.setUserId(userId);
-            entry.setJobId(jobId);
-            entry.setWorkDate(Date.valueOf(workDate));
-            entry.setHoursWorked(hoursWorked);
-            entry.setNotes(notes != null ? notes.trim() : null);
+            Income income = new Income();
+            income.setUserId(userId);
+            income.setIncomeType("CUSTOM");
+            income.setSource(source.trim());
+            income.setCategory(category != null && !category.isBlank() ? category.trim() : null);
+            income.setAmount(amount);
+            income.setIncomeDate(Date.valueOf(incomeDate));
+            income.setNotes(notes != null && !notes.isBlank() ? notes.trim() : null);
 
-            timesheetService.save(entry);
-
-            BigDecimal wage     = jobOpt.get().getHourlyWage();
-            BigDecimal earnings = hoursWorked.multiply(wage);
+            incomeService.addIncome(income);
             redirectAttributes.addFlashAttribute("successMessage",
-                    "Work entry saved! Earned: $" + earnings.setScale(2, java.math.RoundingMode.HALF_UP));
-            redirectAttributes.addFlashAttribute("activeTab", "history");
+                    "Income '" + source.trim() + "' saved! ($" +
+                    amount.setScale(2, java.math.RoundingMode.HALF_UP) + ")");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage",
-                    "Error saving entry: " + e.getMessage());
-            redirectAttributes.addFlashAttribute("activeTab", "log");
+                    "Error saving income: " + e.getMessage());
         }
         return "redirect:/income";
     }
 
-    // ── POST /income/work/delete ───────────────────────────────────────────────
-    @PostMapping("/income/work/delete")
-    public String deleteWorkEntry(
-            @RequestParam Long entryId,
+    // ── POST /income/custom/delete ─────────────────────────────────────────────
+    @PostMapping("/income/custom/delete")
+    public String deleteCustomIncome(
+            @RequestParam Long incomeId,
             Authentication authentication,
             RedirectAttributes redirectAttributes) {
         try {
             Long userId = getUserId(authentication);
-            int deleted = timesheetService.deleteEntry(entryId, userId);
+            int deleted = incomeService.deleteCustomIncome(incomeId, userId);
             if (deleted > 0) {
-                redirectAttributes.addFlashAttribute("successMessage", "Entry deleted.");
+                redirectAttributes.addFlashAttribute("successMessage", "Income entry deleted.");
             } else {
-                redirectAttributes.addFlashAttribute("errorMessage", "Entry not found.");
+                redirectAttributes.addFlashAttribute("errorMessage", "Entry not found or already deleted.");
             }
-            redirectAttributes.addFlashAttribute("activeTab", "history");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage",
-                    "Error deleting entry: " + e.getMessage());
+                    "Error deleting income: " + e.getMessage());
         }
         return "redirect:/income";
     }
 
-    // ── POST /income/save (extra income) ──────────────────────────────────────
+    // ── POST /income/save (legacy bulk extra income — kept for compatibility) ──
     @PostMapping("/income/save")
     public String saveIncomeEntries(
             @RequestParam(value = "sourceName", required = false) List<String> sourceNames,
@@ -206,7 +148,7 @@ public class IncomeController {
 
         if (sourceNames == null || sourceNames.isEmpty()) {
             redirectAttributes.addFlashAttribute("errorMessage",
-                    "Please add at least one extra income row before saving.");
+                    "Please add at least one income row before saving.");
             return "redirect:/income";
         }
 
@@ -220,7 +162,7 @@ public class IncomeController {
                 if (source == null || source.isBlank() || amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
                     continue;
                 }
-                toSave.add(new Income(null, userId, "EXTRA", source.trim(), amount,
+                toSave.add(new Income(null, userId, "EXTRA", source.trim(), null, amount,
                         new Date(System.currentTimeMillis()), null));
             }
 

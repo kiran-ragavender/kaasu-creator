@@ -1,6 +1,7 @@
 package kaasu_creator.model;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 
@@ -41,4 +42,12 @@ public class Goal {
     public void setCurrentAmount(BigDecimal currentAmount) { this.currentAmount = currentAmount; }
     public void setDeadline(LocalDate deadline) { this.deadline = deadline; }
     public void setCreatedAt(Timestamp createdAt) { this.createdAt = createdAt; }
+
+    public BigDecimal getProgressPercent() {
+        if (targetAmount == null || targetAmount.compareTo(BigDecimal.ZERO) == 0) return BigDecimal.ZERO;
+        BigDecimal current = currentAmount != null ? currentAmount : BigDecimal.ZERO;
+        return current.divide(targetAmount, 4, RoundingMode.HALF_UP)
+                      .multiply(new BigDecimal("100"))
+                      .setScale(1, RoundingMode.HALF_UP);
+    }
 }

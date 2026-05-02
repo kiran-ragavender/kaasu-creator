@@ -7,28 +7,32 @@
         .calculator-wrapper {
             display: flex;
             justify-content: center;
-            align-items: center;
-            margin-top: 40px;
+            margin-top: 8px;
+            margin-bottom: 40px;
         }
 
         .calculator {
-            background: #1c1f2e;
-            padding: 20px;
+            background: var(--bg-card);
+            border: 1px solid #1e1e1e;
+            padding: 24px;
             border-radius: 20px;
             width: 320px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
         }
 
         .display {
             height: 80px;
-            background: #111320;
-            color: white;
+            background: #0a0a0a;
+            border: 1px solid #252525;
+            color: var(--text-primary);
             font-size: 2rem;
+            font-weight: 700;
             text-align: right;
             padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 15px;
+            border-radius: 12px;
+            margin-bottom: 16px;
             overflow-x: auto;
+            letter-spacing: -0.5px;
         }
 
         .buttons {
@@ -39,39 +43,59 @@
 
         .btn {
             height: 60px;
-            font-size: 1.2rem;
-            border: none;
+            font-size: 1.15rem;
+            font-weight: 600;
+            border: 1px solid #1e1e1e;
             border-radius: 12px;
-            background: #2a2f45;
-            color: white;
+            background: #181818;
+            color: var(--text-primary);
             cursor: pointer;
-            transition: 0.2s;
+            transition: all 0.15s;
         }
 
         .btn:hover {
-            background: #3a4060;
+            background: #242424;
+            border-color: #2e2e2e;
+        }
+
+        .btn:active {
+            transform: scale(0.95);
         }
 
         .operator {
-            background: #17c0d1;
-            color: white;
+            background: var(--red-dim);
+            color: var(--red);
+            border-color: var(--red-border);
+            font-weight: 700;
         }
 
         .operator:hover {
-            background: #13aab9;
+            background: rgba(232, 121, 160, 0.2);
         }
 
         .equals {
-            background: #e8415b;
+            background: var(--red);
+            color: white;
+            border-color: var(--red);
             grid-row: span 2;
+            box-shadow: 0 4px 16px var(--red-glow);
+            font-weight: 700;
         }
 
         .equals:hover {
-            background: #c7374c;
+            background: var(--accent-purple);
+            box-shadow: 0 6px 22px var(--red-glow);
         }
 
         .action {
-            background: #444a6b;
+            background: #1e1e1e;
+            color: var(--muted);
+            border-color: #252525;
+        }
+
+        .action:hover {
+            color: var(--red);
+            border-color: var(--red-border);
         }
 
         .zero {
@@ -88,15 +112,22 @@
             <a href="/income">Income</a>
             <a href="/budget">Expenses</a>
             <a href="/calculator">Calculator</a>
+            <a href="/ai-roadmap">AI Roadmap</a>
             <a href="/profile">Profile</a>
             <a href="/logout" style="color:var(--accent-pink);">Logout</a>
         </div>
     </nav>
 
     <div class="container">
-        <h1 style="text-align:center;margin-bottom:30px;">📱 Calculator</h1>
+        <button onclick="history.back()" class="back-btn">← Back</button>
 
-        <div class="calculator-wrapper">
+        <div class="page-header">
+            <span class="ph-icon">🧮</span>
+            <h1 class="ph-title">Calculator</h1>
+            <p class="ph-sub">Quick math with full keyboard support.</p>
+        </div>
+
+        <div class="calculator-wrapper" style="margin-top:8px;">
             <div class="calculator">
 
                 <!-- Display -->
@@ -134,7 +165,7 @@
     <!-- Kaasu-chan mascot -->
     <div class="kaasu-mascot">
         💁‍♀️
-        <div class="kaasu-mascot">
+        <div class="kaasu-speech">
             <strong>Kaasu-chan:</strong><br>
             "Tap tap tap! Let's do some math~"
         </div>

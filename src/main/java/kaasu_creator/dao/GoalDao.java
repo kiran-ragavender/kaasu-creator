@@ -1,7 +1,6 @@
 package kaasu_creator.dao;
 
 import java.sql.PreparedStatement;
-import java.sql.Statement;
 import java.util.List;
 
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -37,7 +36,7 @@ public class GoalDao {
         String sql = "INSERT INTO goals (user_id, name, target_amount, current_amount, deadline) VALUES (?, ?, ?, ?, ?)";
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbc.update(con -> {
-            PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement ps = con.prepareStatement(sql, new String[]{"id"});
             ps.setLong(1, goal.getUserId());
             ps.setString(2, goal.getName());
             ps.setBigDecimal(3, goal.getTargetAmount());
@@ -60,6 +59,11 @@ public class GoalDao {
     public Goal findById(Long id) {
         String sql = "SELECT * FROM goals WHERE id = ?";
         return jdbc.query(sql, goalRowMapper, id).stream().findFirst().orElse(null);
+    }
+
+    // DELETE a goal by ID
+    public void deleteById(Long goalId) {
+        jdbc.update("DELETE FROM goals WHERE id = ?", goalId);
     }
 
     // UPDATE the current_amount of a goal (when user adds savings)

@@ -13,14 +13,23 @@
             <a href="/income">Income</a>
             <a href="/budget">Expenses</a>
             <a href="/calculator">Calculator</a>
+            <a href="/ai-roadmap">AI Roadmap</a>
             <a href="/profile">Profile</a>
             <a href="/logout" style="color:var(--accent-pink);">Logout</a>
         </div>
     </nav>
 
     <div class="container">
-        <!-- Success message -->
+        <button onclick="history.back()" class="back-btn">← Back</button>
+        <div class="page-header">
+            <span class="ph-icon">🎯</span>
+            <h1 class="ph-title">Savings Goals</h1>
+            <p class="ph-sub">Set a target, pick a deadline, and get a week-by-week savings roadmap.</p>
+        </div>
+
+        <!-- Flash messages -->
         <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+        <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
 
         <!-- Create goal form -->
         <div class="card">
@@ -61,7 +70,7 @@
                             <span th:text="${goal.deadline}">2024-12-31</span>
                         </p>
                     </div>
-                    <div>
+                    <div style="display:flex;gap:8px;align-items:center;">
                         <!-- Add savings form -->
                         <form th:action="@{/goal/add-savings}" method="post" style="display:inline-flex;gap:5px;">
                             <input type="hidden" name="goalId" th:value="${goal.id}">
@@ -69,18 +78,25 @@
                                    style="width:100px;padding:8px;">
                             <button type="submit" class="btn btn-primary" style="padding:8px 16px;">Add Savings</button>
                         </form>
+                        <!-- Delete goal form -->
+                        <form th:action="@{/goal/delete}" method="post" style="display:inline;">
+                            <input type="hidden" name="goalId" th:value="${goal.id}">
+                            <button type="submit" class="btn btn-secondary"
+                                    style="padding:8px 12px;color:var(--accent-pink);"
+                                    onclick="return confirm('Delete this goal?')">🗑</button>
+                        </form>
                     </div>
                 </div>
 
                 <!-- Progress bar -->
                 <div class="progress-bar">
                     <div class="progress-fill" style="width:0%;"
-                         th:style="'width:' + ${goal.currentAmount.divide(goal.targetAmount, 4, T(java.math.RoundingMode).HALF_UP).multiply(new java.math.BigDecimal('100'))} + '%'">
+                         th:style="'width:' + ${goal.progressPercent} + '%'">
                     </div>
                 </div>
                 <div class="progress-text">
                     $<span th:text="${goal.currentAmount}">0</span> / $<span th:text="${goal.targetAmount}">0</span>
-                    (<span th:text="${goal.currentAmount.divide(goal.targetAmount, 4, T(java.math.RoundingMode).HALF_UP).multiply(new java.math.BigDecimal('100')).setScale(1)}">0</span>%)
+                    (<span th:text="${goal.progressPercent}">0</span>%)
                 </div>
             </div>
         </div>

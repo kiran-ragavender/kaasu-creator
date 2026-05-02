@@ -5,126 +5,128 @@
     <link rel="stylesheet" href="/css/style.css">
     <style>
         .calculator-section {
-            background: var(--bg-secondary);
-            border-radius: 12px;
-            padding: 24px;
-            margin-bottom: 24px;
-            border: 1px solid var(--border);
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 28px;
+            margin-bottom: 20px;
+            border: 1px solid #1e1e1e;
+            transition: border-color 0.25s, box-shadow 0.25s;
         }
-
+        .calculator-section:hover {
+            border-color: var(--red-border);
+            box-shadow: 0 8px 28px var(--red-glow);
+        }
         .calculator-section h3 {
-            color: var(--accent-cyan);
-            margin-bottom: 16px;
-            font-size: 1.4rem;
+            color: var(--red);
+            margin-bottom: 4px;
+            font-size: 1rem;
+            font-weight: 700;
         }
-
+        .tool-description {
+            color: var(--muted);
+            font-size: 0.85rem;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
         .form-row {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr auto;
             gap: 12px;
             align-items: end;
-            margin-bottom: 16px;
+            margin-bottom: 4px;
         }
-
-        .form-group {
-            display: flex;
-            flex-direction: column;
+        .form-row-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr auto;
+            gap: 12px;
+            align-items: end;
+            margin-bottom: 4px;
         }
-
+        .form-group { display: flex; flex-direction: column; }
         .form-group label {
-            font-weight: 600;
-            color: var(--text-primary);
-            margin-bottom: 6px;
-            font-size: 0.9rem;
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--muted);
+            margin-bottom: 7px;
         }
-
         .form-group input {
-            padding: 10px;
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            background: var(--bg-primary);
+            padding: 11px 14px;
+            border: 1px solid #252525;
+            border-radius: 9px;
+            background: #0d0d0d;
             color: var(--text-primary);
-            font-size: 1rem;
+            font-size: 0.95rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
         }
-
         .form-group input:focus {
             outline: none;
-            border-color: var(--accent-cyan);
-            box-shadow: 0 0 0 2px rgba(23, 192, 209, 0.2);
+            border-color: var(--red);
+            box-shadow: 0 0 0 3px var(--red-dim);
         }
-
         .btn-calculate {
-            background: var(--accent-cyan);
+            background: var(--red);
             color: white;
             border: none;
-            padding: 10px 20px;
-            border-radius: 6px;
+            padding: 11px 22px;
+            border-radius: 9px;
             cursor: pointer;
-            font-weight: 600;
-            transition: all 0.2s ease;
+            font-weight: 700;
+            font-size: 0.875rem;
+            white-space: nowrap;
+            box-shadow: 0 4px 14px var(--red-glow);
+            transition: all 0.2s;
         }
-
         .btn-calculate:hover {
-            background: #13aab9;
-            transform: translateY(-1px);
+            background: var(--accent-purple);
+            transform: translateY(-2px);
         }
-
         .result-card {
-            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-cyan-dark));
-            color: white;
-            padding: 20px;
-            border-radius: 8px;
+            background: #0a0a0a;
+            border: 1px solid var(--red-border);
+            padding: 20px 24px;
+            border-radius: 12px;
             margin-top: 16px;
             text-align: center;
         }
-
         .result-card h4 {
-            margin: 0 0 8px 0;
-            font-size: 1.2rem;
+            margin: 0 0 6px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--muted);
         }
-
         .result-value {
-            font-size: 2rem;
-            font-weight: bold;
-            margin: 8px 0;
+            font-size: 2.2rem;
+            font-weight: 900;
+            color: var(--red);
+            letter-spacing: -1px;
+            margin: 4px 0 8px;
         }
-
         .result-details {
-            font-size: 0.9rem;
-            opacity: 0.9;
+            font-size: 0.85rem;
+            color: var(--muted);
+            line-height: 1.6;
         }
-
         .error-message {
-            background: rgba(244, 67, 54, 0.1);
-            border: 1px solid var(--error);
-            color: var(--error);
-            padding: 12px;
-            border-radius: 6px;
+            background: var(--red-dim);
+            border: 1px solid var(--red-border);
+            color: var(--red);
+            padding: 12px 16px;
+            border-radius: 9px;
             margin-top: 12px;
-            font-weight: 500;
+            font-size: 0.875rem;
+            font-weight: 600;
         }
-
-        .tool-description {
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-            margin-bottom: 16px;
-            line-height: 1.4;
-        }
-
         @media (max-width: 768px) {
-            .form-row {
-                grid-template-columns: 1fr;
-                gap: 12px;
-            }
-
-            .calculator-section {
-                padding: 16px;
-            }
+            .form-row, .form-row-2 { grid-template-columns: 1fr; }
+            .calculator-section { padding: 20px; }
         }
     </style>
 </head>
 <body>
-    <!-- Navbar -->
     <nav class="navbar">
         <a href="/dashboard" class="navbar-brand">💸 Kaasu Creator</a>
         <div class="navbar-links">
@@ -132,297 +134,158 @@
             <a href="/income">Income</a>
             <a href="/budget">Expenses</a>
             <a href="/calculator">Calculator</a>
+            <a href="/ai-roadmap">AI Roadmap</a>
             <a href="/profile">Profile</a>
-            <a href="/logout" style="color:var(--accent-pink);">Logout</a>
+            <a href="/logout" style="color:var(--red);">Logout</a>
         </div>
     </nav>
 
     <div class="container">
-        <!-- Header -->
-        <div style="text-align:center;padding:40px 0;">
-            <div style="font-size:4rem;margin-bottom:20px;">📊</div>
-            <h1 style="font-size:2.5rem;color:var(--text-primary);">
-                Financial Calculator
-            </h1>
-            <p style="color:var(--text-secondary);font-size:1.1rem;margin-top:10px;">
-                🌟 Kaasu-chan says: "Let's crunch some financial numbers!"
-            </p>
+        <button onclick="history.back()" class="back-btn">← Back</button>
+
+        <div class="page-header">
+            <span class="ph-icon">📊</span>
+            <h1 class="ph-title">Financial Calculator</h1>
+            <p class="ph-sub">Savings timelines, compound interest, and budget ratios — all in one place.</p>
         </div>
 
         <!-- Savings Goal Calculator -->
         <div class="calculator-section">
             <h3>🎯 Savings Goal Calculator</h3>
-            <p class="tool-description">
-                Calculate how many months it will take to reach your savings goal with regular monthly contributions.
-            </p>
-
-            <div class="form-row">
+            <p class="tool-description">How many months until you reach your savings goal?</p>
+            <div class="form-row-2">
                 <div class="form-group">
                     <label for="savingsTarget">Target Amount ($)</label>
-                    <input type="number" id="savingsTarget" step="0.01" min="0.01" placeholder="e.g., 10000.00">
+                    <input type="number" id="savingsTarget" step="0.01" min="0.01" placeholder="10000.00">
                 </div>
-
                 <div class="form-group">
                     <label for="savingsMonthly">Monthly Savings ($)</label>
-                    <input type="number" id="savingsMonthly" step="0.01" min="0.01" placeholder="e.g., 500.00">
+                    <input type="number" id="savingsMonthly" step="0.01" min="0.01" placeholder="500.00">
                 </div>
-
-                <div></div>
-
                 <button type="button" class="btn-calculate" onclick="calculateSavingsGoal()">Calculate</button>
             </div>
-
-            <!-- Results -->
-            <div id="savingsResult" class="result-card" style="display: none;">
-                <h4>Time to Reach Your Goal</h4>
+            <div id="savingsResult" class="result-card" style="display:none;">
+                <h4>Time to Goal</h4>
                 <div class="result-value" id="savingsMonths">0 months</div>
-                <div class="result-details" id="savingsDetails">
-                    Saving $0.00 per month to reach $0.00
-                </div>
+                <div class="result-details" id="savingsDetails"></div>
             </div>
-
-            <!-- Error Message -->
-            <div id="savingsError" class="error-message" style="display: none;"></div>
+            <div id="savingsError" class="error-message" style="display:none;"></div>
         </div>
 
         <!-- Compound Interest Calculator -->
         <div class="calculator-section">
             <h3>💹 Compound Interest Calculator</h3>
-            <p class="tool-description">
-                Calculate the future value of your investment with compound interest over time.
-            </p>
-
+            <p class="tool-description">Calculate the future value of an investment with annual compound interest.</p>
             <div class="form-row">
                 <div class="form-group">
-                    <label for="principal">Principal Amount ($)</label>
-                    <input type="number" id="principal" step="0.01" min="0.01" placeholder="e.g., 10000.00">
+                    <label for="principal">Principal ($)</label>
+                    <input type="number" id="principal" step="0.01" min="0.01" placeholder="10000.00">
                 </div>
-
                 <div class="form-group">
-                    <label for="interestRate">Annual Interest Rate (%)</label>
-                    <input type="number" id="interestRate" step="0.01" min="0" max="100" placeholder="e.g., 5.5">
+                    <label for="interestRate">Annual Rate (%)</label>
+                    <input type="number" id="interestRate" step="0.01" min="0" max="100" placeholder="5.5">
                 </div>
-
                 <div class="form-group">
-                    <label for="years">Number of Years</label>
-                    <input type="number" id="years" min="1" placeholder="e.g., 10">
+                    <label for="years">Years</label>
+                    <input type="number" id="years" min="1" placeholder="10">
                 </div>
-
                 <button type="button" class="btn-calculate" onclick="calculateCompoundInterest()">Calculate</button>
             </div>
-
-            <!-- Results -->
-            <div id="interestResult" class="result-card" style="display: none;">
+            <div id="interestResult" class="result-card" style="display:none;">
                 <h4>Future Value</h4>
                 <div class="result-value" id="futureValue">$0.00</div>
-                <div class="result-details" id="interestDetails">
-                    $0.00 at 0% for 0 years
-                </div>
+                <div class="result-details" id="interestDetails"></div>
             </div>
-
-            <!-- Error Message -->
-            <div id="interestError" class="error-message" style="display: none;"></div>
+            <div id="interestError" class="error-message" style="display:none;"></div>
         </div>
 
         <!-- Budget Ratio Calculator -->
         <div class="calculator-section">
             <h3>📊 Budget Ratio Calculator</h3>
-            <p class="tool-description">
-                Calculate your expense ratio and see how much money you have left after expenses.
-            </p>
-
-            <div class="form-row">
+            <p class="tool-description">See your expense ratio and how much you have left after monthly expenses.</p>
+            <div class="form-row-2">
                 <div class="form-group">
                     <label for="monthlyIncome">Monthly Income ($)</label>
-                    <input type="number" id="monthlyIncome" step="0.01" min="0.01" placeholder="e.g., 5000.00">
+                    <input type="number" id="monthlyIncome" step="0.01" min="0.01" placeholder="5000.00">
                 </div>
-
                 <div class="form-group">
                     <label for="monthlyExpenses">Monthly Expenses ($)</label>
-                    <input type="number" id="monthlyExpenses" step="0.01" min="0" placeholder="e.g., 3500.00">
+                    <input type="number" id="monthlyExpenses" step="0.01" min="0" placeholder="3500.00">
                 </div>
-
-                <div></div>
-
                 <button type="button" class="btn-calculate" onclick="calculateBudgetRatio()">Calculate</button>
             </div>
-
-            <!-- Results -->
-            <div id="budgetResult" class="result-card" style="display: none;">
-                <h4>Budget Analysis</h4>
+            <div id="budgetResult" class="result-card" style="display:none;">
+                <h4>Expense Ratio</h4>
                 <div class="result-value" id="expenseRatio">0%</div>
-                <div class="result-details" id="budgetDetails">
-                    Expense ratio from income of $0.00<br>
-                    Remaining balance: $0.00
-                </div>
+                <div class="result-details" id="budgetDetails"></div>
             </div>
-
-            <!-- Error Message -->
-            <div id="budgetError" class="error-message" style="display: none;"></div>
+            <div id="budgetError" class="error-message" style="display:none;"></div>
         </div>
     </div>
 
-    <!-- Kaasu-chan mascot -->
     <div class="kaasu-mascot">
         💁‍♀️
         <div class="kaasu-speech">
             <strong>Kaasu-chan:</strong><br>
-            "Numbers don't lie! Use these tools to make smart financial decisions~"
+            "Numbers don't lie! Use these tools wisely~"
         </div>
     </div>
 
     <script src="/js/app.js"></script>
-
     <script>
-        // Utility function to format currency
         function formatCurrency(amount) {
-            return new Intl.NumberFormat('en-US', {
-                style: 'currency',
-                currency: 'USD',
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2
-            }).format(amount);
+            return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2 }).format(amount);
         }
+        function showError(id, msg) { const el = document.getElementById(id); el.textContent = msg; el.style.display = 'block'; }
+        function hideError(id) { document.getElementById(id).style.display = 'none'; }
+        function showResult(id) { document.getElementById(id).style.display = 'block'; }
+        function hideResult(id) { document.getElementById(id).style.display = 'none'; }
 
-        // Utility function to show error
-        function showError(elementId, message) {
-            const errorElement = document.getElementById(elementId);
-            errorElement.textContent = message;
-            errorElement.style.display = 'block';
-        }
-
-        // Utility function to hide error
-        function hideError(elementId) {
-            const errorElement = document.getElementById(elementId);
-            errorElement.style.display = 'none';
-        }
-
-        // Utility function to show result
-        function showResult(resultId) {
-            const resultElement = document.getElementById(resultId);
-            resultElement.style.display = 'block';
-        }
-
-        // Utility function to hide result
-        function hideResult(resultId) {
-            const resultElement = document.getElementById(resultId);
-            resultElement.style.display = 'none';
-        }
-
-        // A. Savings Goal Calculator
         function calculateSavingsGoal() {
-            const targetAmount = parseFloat(document.getElementById('savingsTarget').value);
-            const monthlySavings = parseFloat(document.getElementById('savingsMonthly').value);
-
-            // Hide previous results and errors
-            hideResult('savingsResult');
-            hideError('savingsError');
-
-            // Validate inputs
-            if (isNaN(targetAmount) || targetAmount <= 0) {
-                showError('savingsError', 'Please enter a valid target amount greater than 0');
-                return;
-            }
-
-            if (isNaN(monthlySavings) || monthlySavings <= 0) {
-                showError('savingsError', 'Please enter a valid monthly savings amount greater than 0');
-                return;
-            }
-
-            // Calculate months needed
-            const monthsNeeded = Math.ceil(targetAmount / monthlySavings);
-
-            // Update results
-            document.getElementById('savingsMonths').textContent = monthsNeeded + ' months';
-            document.getElementById('savingsDetails').innerHTML =
-                `Saving ${formatCurrency(monthlySavings)} per month to reach ${formatCurrency(targetAmount)}`;
-
+            const target = parseFloat(document.getElementById('savingsTarget').value);
+            const monthly = parseFloat(document.getElementById('savingsMonthly').value);
+            hideResult('savingsResult'); hideError('savingsError');
+            if (isNaN(target) || target <= 0) { showError('savingsError', 'Enter a valid target amount greater than 0'); return; }
+            if (isNaN(monthly) || monthly <= 0) { showError('savingsError', 'Enter a valid monthly savings amount greater than 0'); return; }
+            const months = Math.ceil(target / monthly);
+            document.getElementById('savingsMonths').textContent = months + ' months';
+            document.getElementById('savingsDetails').innerHTML = `Saving ${formatCurrency(monthly)}/month to reach ${formatCurrency(target)}`;
             showResult('savingsResult');
         }
 
-        // B. Compound Interest Calculator
         function calculateCompoundInterest() {
             const principal = parseFloat(document.getElementById('principal').value);
-            const interestRate = parseFloat(document.getElementById('interestRate').value);
+            const rate = parseFloat(document.getElementById('interestRate').value);
             const years = parseInt(document.getElementById('years').value);
-
-            // Hide previous results and errors
-            hideResult('interestResult');
-            hideError('interestError');
-
-            // Validate inputs
-            if (isNaN(principal) || principal <= 0) {
-                showError('interestError', 'Please enter a valid principal amount greater than 0');
-                return;
-            }
-
-            if (isNaN(interestRate) || interestRate < 0 || interestRate > 100) {
-                showError('interestError', 'Please enter a valid interest rate between 0% and 100%');
-                return;
-            }
-
-            if (isNaN(years) || years <= 0) {
-                showError('interestError', 'Please enter a valid number of years greater than 0');
-                return;
-            }
-
-            // Calculate compound interest: A = P(1 + r)^t
-            const rate = interestRate / 100;
-            const futureValue = principal * Math.pow(1 + rate, years);
-
-            // Update results
+            hideResult('interestResult'); hideError('interestError');
+            if (isNaN(principal) || principal <= 0) { showError('interestError', 'Enter a valid principal amount greater than 0'); return; }
+            if (isNaN(rate) || rate < 0 || rate > 100) { showError('interestError', 'Enter a valid interest rate between 0% and 100%'); return; }
+            if (isNaN(years) || years <= 0) { showError('interestError', 'Enter a valid number of years greater than 0'); return; }
+            const futureValue = principal * Math.pow(1 + rate / 100, years);
             document.getElementById('futureValue').textContent = formatCurrency(futureValue);
-            document.getElementById('interestDetails').innerHTML =
-                `${formatCurrency(principal)} at ${interestRate}% for ${years} years`;
-
+            document.getElementById('interestDetails').innerHTML = `${formatCurrency(principal)} at ${rate}% for ${years} years`;
             showResult('interestResult');
         }
 
-        // C. Budget Ratio Calculator
         function calculateBudgetRatio() {
-            const monthlyIncome = parseFloat(document.getElementById('monthlyIncome').value);
-            const monthlyExpenses = parseFloat(document.getElementById('monthlyExpenses').value);
-
-            // Hide previous results and errors
-            hideResult('budgetResult');
-            hideError('budgetError');
-
-            // Validate inputs
-            if (isNaN(monthlyIncome) || monthlyIncome <= 0) {
-                showError('budgetError', 'Please enter a valid monthly income greater than 0');
-                return;
-            }
-
-            if (isNaN(monthlyExpenses) || monthlyExpenses < 0) {
-                showError('budgetError', 'Please enter a valid monthly expenses amount (0 or greater)');
-                return;
-            }
-
-            // Calculate expense ratio and remaining balance
-            const expenseRatio = (monthlyExpenses / monthlyIncome) * 100;
-            const remainingBalance = monthlyIncome - monthlyExpenses;
-
-            // Update results
-            document.getElementById('expenseRatio').textContent = expenseRatio.toFixed(1) + '%';
-            document.getElementById('budgetDetails').innerHTML =
-                `Expense ratio from income of ${formatCurrency(monthlyIncome)}<br>` +
-                `Remaining balance: ${formatCurrency(remainingBalance)}`;
-
+            const income = parseFloat(document.getElementById('monthlyIncome').value);
+            const expenses = parseFloat(document.getElementById('monthlyExpenses').value);
+            hideResult('budgetResult'); hideError('budgetError');
+            if (isNaN(income) || income <= 0) { showError('budgetError', 'Enter a valid monthly income greater than 0'); return; }
+            if (isNaN(expenses) || expenses < 0) { showError('budgetError', 'Enter a valid expenses amount (0 or greater)'); return; }
+            const ratio = (expenses / income) * 100;
+            const remaining = income - expenses;
+            document.getElementById('expenseRatio').textContent = ratio.toFixed(1) + '%';
+            document.getElementById('budgetDetails').innerHTML = `Expense ratio from income of ${formatCurrency(income)}<br>Remaining: ${formatCurrency(remaining)}`;
             showResult('budgetResult');
         }
 
-        // Add keyboard support for Enter key
         document.addEventListener('DOMContentLoaded', function() {
-            const inputs = document.querySelectorAll('input[type="number"]');
-            inputs.forEach(input => {
+            document.querySelectorAll('input[type="number"]').forEach(input => {
                 input.addEventListener('keypress', function(e) {
                     if (e.key === 'Enter') {
-                        // Find the calculate button in the same section
-                        const section = e.target.closest('.calculator-section');
-                        const calculateBtn = section.querySelector('.btn-calculate');
-                        if (calculateBtn) {
-                            calculateBtn.click();
-                        }
+                        const btn = e.target.closest('.calculator-section')?.querySelector('.btn-calculate');
+                        if (btn) btn.click();
                     }
                 });
             });

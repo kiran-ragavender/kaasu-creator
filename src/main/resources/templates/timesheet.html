@@ -3,511 +3,408 @@
 <head>
     <title>Timesheet - Kaasu Creator</title>
     <link rel="stylesheet" href="/css/style.css">
-    <style>
-        .timesheet-page-header {
-            text-align: center;
-            padding: 40px 0 30px;
-        }
-
-        .timesheet-page-header h1 {
-            font-size: 2.5rem;
-            color: var(--text-primary);
-            margin: 0;
-        }
-
-        .timesheet-page-header p {
-            color: var(--text-secondary);
-            font-size: 1.05rem;
-            margin-top: 12px;
-        }
-
-        .timesheet-section {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            padding: 24px;
-            margin-bottom: 24px;
-        }
-
-        .job-library-card {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            padding: 24px;
-            margin-bottom: 24px;
-        }
-
-        .section-header {
-            margin-bottom: 20px;
-        }
-
-        .section-header h2 {
-            margin: 0 0 8px 0;
-            color: var(--text-primary);
-            font-size: 1.4rem;
-        }
-
-        .section-header p {
-            margin: 0;
-            color: var(--text-secondary);
-            font-size: 0.95rem;
-        }
-
-        .timesheet-section h2 {
-            margin-top: 0;
-            color: var(--text-primary);
-            font-size: 1.4rem;
-        }
-
-        .btn {
-            background: var(--accent-cyan);
-            border: none;
-            color: white;
-            padding: 12px 18px;
-            border-radius: 12px;
-            cursor: pointer;
-            font-weight: 700;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-
-        .btn:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 10px 20px rgba(23, 192, 209, 0.2);
-        }
-
-        .btn-danger {
-            background: var(--accent-pink);
-        }
-
-        .btn-danger:hover {
-            box-shadow: 0 10px 20px rgba(237, 48, 79, 0.2);
-        }
-
-        .timesheet-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 12px;
-        }
-
-        .timesheet-table th,
-        .timesheet-table td {
-            padding: 12px 10px;
-            border: 1px solid var(--border);
-            color: var(--text-primary);
-            vertical-align: middle;
-        }
-
-        .timesheet-table th {
-            text-align: left;
-            background: rgba(255, 255, 255, 0.03);
-            color: var(--accent-cyan);
-            font-weight: 700;
-            white-space: nowrap;
-        }
-
-        .timesheet-table input,
-        .timesheet-table select {
-            width: 100%;
-            padding: 9px 10px;
-            border-radius: 10px;
-            border: 1px solid var(--border);
-            background: var(--bg-primary);
-            color: var(--text-primary);
-            box-sizing: border-box;
-        }
-
-        .timesheet-table input:focus,
-        .timesheet-table select:focus {
-            outline: none;
-            border-color: var(--accent-cyan);
-            box-shadow: 0 0 0 2px rgba(23, 192, 209, 0.15);
-        }
-
-        .action-cell {
-            text-align: center;
-        }
-
-        .summary-card {
-            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-cyan-dark));
-            color: white;
-            border-radius: 20px;
-            padding: 24px;
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 16px;
-            margin-bottom: 24px;
-        }
-
-        .summary-item {
-            padding: 16px;
-            background: rgba(255, 255, 255, 0.08);
-            border-radius: 16px;
-            text-align: center;
-        }
-
-        .summary-item h3 {
-            margin: 0 0 10px 0;
-            font-size: 1rem;
-            color: rgba(255, 255, 255, 0.85);
-        }
-
-        .summary-item p {
-            margin: 0;
-            font-size: 1.8rem;
-            font-weight: 700;
-        }
-
-        .saved-card {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            padding: 24px;
-        }
-
-        .saved-card table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .saved-card th,
-        .saved-card td {
-            padding: 12px;
-            border: 1px solid var(--border);
-            color: var(--text-primary);
-        }
-
-        .saved-card th {
-            background: rgba(255, 255, 255, 0.03);
-            color: var(--accent-cyan);
-        }
-
-        .saved-card tbody tr:nth-child(odd) {
-            background: rgba(255, 255, 255, 0.02);
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 40px 0;
-            color: var(--text-secondary);
-        }
-
-        .delete-btn {
-            background: var(--accent-pink);
-            border: none;
-            border-radius: 10px;
-            color: white;
-            cursor: pointer;
-            padding: 8px 12px;
-            font-size: 0.85rem;
-        }
-
-        .delete-btn:hover {
-            background: #c7374c;
-        }
-
-        .message {
-            padding: 14px 18px;
-            border-radius: 12px;
-            margin-bottom: 20px;
-            font-weight: 600;
-        }
-
-        .message.success {
-            background: rgba(23, 192, 209, 0.15);
-            color: var(--accent-cyan);
-            border: 1px solid rgba(23, 192, 209, 0.3);
-        }
-
-        .message.error {
-            background: rgba(237, 48, 79, 0.15);
-            color: var(--accent-pink);
-            border: 1px solid rgba(237, 48, 79, 0.3);
-        }
-
-        .helper-text {
-            background: rgba(23, 192, 209, 0.08);
-            color: var(--text-secondary);
-            border-left: 3px solid var(--accent-cyan);
-            padding: 12px 14px;
-            border-radius: 6px;
-            font-size: 0.95rem;
-            margin-bottom: 16px;
-        }
-
-        @media (max-width: 768px) {
-            .summary-card {
-                grid-template-columns: 1fr;
-            }
-
-            .timesheet-table th,
-            .timesheet-table td {
-                padding: 8px 6px;
-                font-size: 0.9rem;
-            }
-
-            .timesheet-table input,
-            .timesheet-table select {
-                font-size: 0.9rem;
-                padding: 7px 8px;
-            }
-        }
-    </style>
 </head>
 <body>
-    <!-- Navbar -->
-    <nav class="navbar">
-        <a href="/dashboard" class="navbar-brand">💸 Kaasu Creator</a>
-        <div class="navbar-links">
-            <a href="/dashboard">Dashboard</a>
-            <a href="/income">Income</a>
-            <a href="/budget">Expenses</a>
-            <a href="/calculator">Calculator</a>
-            <a href="/profile">Profile</a>
-            <a href="/logout" style="color:var(--accent-pink);">Logout</a>
+
+<!-- ── Navbar ── -->
+<nav class="navbar">
+    <a href="/dashboard" class="navbar-brand">💸 Kaasu Creator</a>
+    <div class="navbar-links">
+        <a href="/dashboard">Dashboard</a>
+        <a href="/income">Income</a>
+        <a href="/budget">Expenses</a>
+        <a href="/calculator">Calculator</a>
+        <a href="/ai-roadmap">AI Roadmap</a>
+        <a href="/profile">Profile</a>
+        <a href="/logout" style="color:var(--red);">Logout</a>
+    </div>
+</nav>
+
+<!-- Hidden hints for JavaScript -->
+<input type="hidden" id="active-tab-hint"   th:value="${activeTab}"     value="jobs">
+<input type="hidden" id="selected-job-hint" th:value="${selectedJobId}" value="">
+
+<div class="container">
+
+    <div style="margin-bottom:16px;">
+        <a href="/income" class="btn btn-secondary"
+           style="font-size:0.9rem;padding:6px 14px;text-decoration:none;">← Back to Income</a>
+    </div>
+
+    <!-- Flash messages -->
+    <div th:if="${successMessage}" class="flash flash-ok">
+        <span>✓</span><span th:text="${successMessage}"></span>
+    </div>
+    <div th:if="${errorMessage}" class="flash flash-err">
+        <span>✕</span><span th:text="${errorMessage}"></span>
+    </div>
+
+    <!-- Hero -->
+    <div class="hero">
+        <span class="icon">⏱️</span>
+        <h1>Timesheet <span>Workspace</span></h1>
+        <p>Manage jobs · Log work hours · Track your full history</p>
+    </div>
+
+    <!-- ── Summary Stats ──────────────────────────────────────────────────────── -->
+    <div class="stat-grid" style="margin-bottom:28px;">
+        <div class="stat-card">
+            <span class="sc-icon">👔</span>
+            <span class="sc-label">Jobs</span>
+            <span class="sc-value" th:text="${#lists.size(jobs)}">0</span>
         </div>
-    </nav>
-
-    <div class="container">
-
-        <div class="timesheet-page-header">
-            <div style="font-size:4rem; margin-bottom:20px;">⏱️</div>
-            <h1>Timesheet</h1>
-            <p>🌟 Kaasu-chan says: "Log your work hours and watch your earnings add up!"</p>
+        <div class="stat-card">
+            <span class="sc-icon">📋</span>
+            <span class="sc-label">Work Entries</span>
+            <span class="sc-value" th:text="${#lists.size(allEntries)}">0</span>
         </div>
-
-        <!-- Success / Error Messages -->
-        <div th:if="${successMessage}" class="message success" th:text="${successMessage}"></div>
-        <div th:if="${errorMessage}" class="message error" th:text="${errorMessage}"></div>
-
-        <!-- Job Library Section -->
-        <div class="job-library-card">
-            <div class="section-header">
-                <h2>Job Library</h2>
-                <p>Save reusable jobs with an hourly rate and optional notes. You'll use these when logging work hours.</p>
-            </div>
-
-            <form id="job-form" th:action="@{/timesheet/job/save}" method="post" style="margin-top:18px; display:grid; gap:14px;">
-                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:14px;">
-                    <div>
-                        <label for="jobName" style="display:block;color:var(--text-secondary);margin-bottom:6px;">Job Name</label>
-                        <input type="text" id="jobName" name="jobName" placeholder="Customer support" required />
-                    </div>
-                    <div>
-                        <label for="hourlyWage" style="display:block;color:var(--text-secondary);margin-bottom:6px;">Hourly Wage ($)</label>
-                        <input type="number" id="hourlyWage" name="hourlyWage" step="0.01" min="0" placeholder="15.00" required />
-                    </div>
-                </div>
-                <div>
-                    <label for="notes" style="display:block;color:var(--text-secondary);margin-bottom:6px;">Notes (Optional)</label>
-                    <input type="text" id="notes" name="notes" placeholder="Additional details about this job" />
-                </div>
-                <div style="text-align:right;">
-                    <button type="submit" class="btn">Save Job</button>
-                </div>
-            </form>
-
-            <div th:if="${#lists.isEmpty(jobs)}" class="empty-state" style="margin-top:24px;">
-                <div style="font-size:2.5rem; margin-bottom:16px;">🛠️</div>
-                <p>No saved jobs yet. Add a job above to start logging timesheet entries.</p>
-            </div>
-            <div th:if="${!#lists.isEmpty(jobs)}" style="overflow-x:auto; margin-top:24px;">
-                <table class="timesheet-table">
-                    <thead>
-                        <tr>
-                            <th>Job Name</th>
-                            <th>Hourly Wage</th>
-                            <th>Notes</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr th:each="job : ${jobs}">
-                            <td th:text="${job.jobName}">Job</td>
-                            <td th:text="'$' + #numbers.formatDecimal(job.hourlyWage, 1, 2)">$0.00</td>
-                            <td th:text="${job.notes != null && !job.notes.isEmpty() ? job.notes : '-'}">Notes</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+        <div class="stat-card">
+            <span class="sc-icon">⏱️</span>
+            <span class="sc-label">Total Hours</span>
+            <span class="sc-value positive"
+                  th:text="${#numbers.formatDecimal(totalHours,1,1)} + ' h'">0.0 h</span>
         </div>
-
-        <!-- Log Work Entry Section -->
-        <div class="timesheet-section">
-            <div class="section-header">
-                <h2>Log Work Entry</h2>
-                <p>Choose a saved job, enter the date and hours worked. Your earned pay is calculated automatically using the saved hourly wage.</p>
-            </div>
-
-            <div class="helper-text">
-                💡 <strong>Example:</strong> Select <strong>Catering</strong>, enter date <strong>2026-04-14</strong> and <strong>5</strong> hours. The system uses that job’s saved hourly wage and calculates earned pay automatically (e.g. $20/hr → $100.00).
-            </div>
-
-            <form id="timesheet-form" th:action="@{/timesheet/entries}" method="post">
-                <div th:if="${#lists.isEmpty(jobs)}" class="empty-state">
-                    <p>No jobs available. Please create a job in the Job Library above first.</p>
-                </div>
-
-                <div th:if="${!#lists.isEmpty(jobs)}">
-                    <table class="timesheet-table">
-                        <thead>
-                            <tr>
-                                <th>Job</th>
-                                <th>Date</th>
-                                <th>Hours Worked</th>
-                                <th>Notes</th>
-                                <th style="text-align:center;">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody id="entry-body">
-                            <tr>
-                                <td>
-                                    <select name="jobId" required>
-                                        <option value="">Select a job...</option>
-                                        <option th:each="job : ${jobs}" th:value="${job.id}" th:text="${job.jobName}">Job</option>
-                                    </select>
-                                </td>
-                                <td>
-                                    <input type="date" name="workDate" th:value="${today}" required>
-                                </td>
-                                <td>
-                                    <input type="number" name="hoursWorked" step="0.01" min="0" placeholder="5.0" required>
-                                </td>
-                                <td>
-                                    <input type="text" name="notes" placeholder="Evening shift">
-                                </td>
-                                <td style="text-align:center;">
-                                    <button type="button" class="delete-btn" onclick="removeRow(this)">Delete</button>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-
-                    <div style="display:flex; gap:12px; justify-content:space-between; margin-top:14px; flex-wrap:wrap;">
-                        <button type="button" class="btn" onclick="addRow()">+ Add Another Row</button>
-                        <button type="submit" class="btn">Save All Entries</button>
-                    </div>
-                </div>
-            </form>
-        </div>
-
-        <!-- Summary Card -->
-        <div th:if="${totalEarned != null}" class="summary-card">
-            <div class="summary-item">
-                <h3>Total Hours</h3>
-                <p th:text="${#numbers.formatDecimal(totalHours, 1, 2)}">0.00</p>
-            </div>
-            <div class="summary-item">
-                <h3>Total Earned</h3>
-                <p th:text="'$' + #numbers.formatDecimal(totalEarned, 1, 2)">$0.00</p>
-            </div>
-        </div>
-
-        <!-- Job Summaries by Job -->
-        <div class="timesheet-section" th:if="${!#lists.isEmpty(jobSummaries)}">
-            <h2>Summary by Job</h2>
-            <div style="overflow-x:auto;">
-                <table class="timesheet-table">
-                    <thead>
-                        <tr>
-                            <th>Job Name</th>
-                            <th>Hourly Pay</th>
-                            <th>Total Hours</th>
-                            <th>Total Earned</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr th:each="summary : ${jobSummaries}">
-                            <td th:text="${summary.jobName}">Job name</td>
-                            <td th:text="'$' + #numbers.formatDecimal(summary.hourlyPay, 1, 2)">$0.00</td>
-                            <td th:text="#numbers.formatDecimal(summary.totalHours, 1, 2)">0.00</td>
-                            <td th:text="'$' + #numbers.formatDecimal(summary.totalEarned, 1, 2)">$0.00</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- Saved Timesheet Entries -->
-        <div class="saved-card">
-            <h2>Saved Timesheet Entries</h2>
-            <div th:if="${#lists.isEmpty(entries)}" class="empty-state">
-                <div style="font-size:2.5rem; margin-bottom:16px;">📋</div>
-                <p>No saved entries yet. Use the form above to log your work hours.</p>
-            </div>
-            <div th:if="${!#lists.isEmpty(entries)}" style="overflow-x:auto;">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Date</th>
-                            <th>Job Name</th>
-                            <th>Hours Worked</th>
-                            <th>Hourly Wage</th>
-                            <th>Earned Amount</th>
-                            <th>Notes</th>
-                            <th style="text-align:center;">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr th:each="entry : ${entries}">
-                            <td th:text="${entry.workDate != null ? #dates.format(entry.workDate, 'MMM dd, yyyy') : '-'}">Date</td>
-                            <td th:text="${entry.jobName}">Job Name</td>
-                            <td th:text="${entry.hoursWorked != null ? #numbers.formatDecimal(entry.hoursWorked, 1, 2) : '0.00'}">0.00</td>
-                            <td th:text="${entry.hourlyWage != null ? '$' + #numbers.formatDecimal(entry.hourlyWage, 1, 2) : '$0.00'}">$0.00</td>
-                            <td th:text="${entry.earnedAmount != null ? '$' + #numbers.formatDecimal(entry.earnedAmount, 1, 2) : '$0.00'}">$0.00</td>
-                            <td th:text="${entry.notes != null && !entry.notes.isEmpty() ? entry.notes : '-'}">Notes</td>
-                            <td style="text-align:center;">
-                                <form th:action="@{/timesheet/entry/delete}" method="post" style="display:inline;">
-                                    <input type="hidden" name="entryId" th:value="${entry.id}">
-                                    <button type="submit" class="delete-btn" onclick="return confirm('Delete this entry?');">Delete</button>
-                                </form>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+        <div class="stat-card">
+            <span class="sc-icon">💰</span>
+            <span class="sc-label">Total Earned</span>
+            <span class="sc-value positive"
+                  th:text="'$' + ${#numbers.formatDecimal(totalEarned,1,2)}">$0.00</span>
         </div>
     </div>
 
-    <script>
-        function addRow() {
-            const tbody = document.getElementById('entry-body');
-            if (!tbody) return;
-            const jobSelect = document.querySelector('#entry-body select[name="jobId"]');
-            const workDateInput = document.querySelector('#entry-body input[name="workDate"]');
-            if (!jobSelect || !workDateInput) return;
-            const jobOptions = jobSelect.innerHTML;
-            const todayDate = workDateInput.value;
+    <!-- ── Tab Navigation ── -->
+    <div class="tab-nav">
+        <button class="tab-btn" data-tab="jobs"    onclick="switchTab('jobs')">My Jobs</button>
+        <button class="tab-btn" data-tab="log"     onclick="switchTab('log')">Log Work</button>
+        <button class="tab-btn" data-tab="history" onclick="switchTab('history')">History</button>
+    </div>
 
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td>
-                    <select name="jobId" required>
-                        ${jobOptions}
+    <!-- ══════════════════════════════════════════════════════════
+         TAB 1 — My Jobs
+         ══════════════════════════════════════════════════════════ -->
+    <div id="tab-jobs" class="tab-panel">
+
+        <div class="top-row">
+            <span class="section-title"
+                  th:text="${#lists.isEmpty(jobs) ? 'No jobs yet' :
+                             #lists.size(jobs) + ' job' + (#lists.size(jobs) == 1 ? '' : 's')}">
+                Jobs
+            </span>
+            <button class="btn-red" onclick="toggleAddPanel()">
+                <span id="add-btn-icon">+</span> Add Job
+            </button>
+        </div>
+
+        <!-- Collapsible add-job form -->
+        <div class="add-panel" id="add-panel">
+            <h3>New Job</h3>
+            <form th:action="@{/timesheet/job/save}" method="post" class="add-form">
+                <div>
+                    <span class="field-label">Job Name</span>
+                    <input type="text" name="jobName" class="field-input"
+                           placeholder="e.g. Barista, Tutor, Catering" required>
+                </div>
+                <div>
+                    <span class="field-label">Hourly Wage ($)</span>
+                    <input type="number" name="hourlyWage" class="field-input"
+                           step="0.01" min="0.01" placeholder="15.00" required>
+                </div>
+                <div>
+                    <span class="field-label">Notes <span style="font-weight:400;text-transform:none;letter-spacing:0">(optional)</span></span>
+                    <input type="text" name="notes" class="field-input"
+                           placeholder="Additional details about this job">
+                </div>
+                <button type="submit" class="btn-red">Save Job</button>
+            </form>
+        </div>
+
+        <!-- Empty state -->
+        <div class="empty" th:if="${#lists.isEmpty(jobs)}">
+            <div class="ei">👔</div>
+            <p>No jobs yet. Click <strong>+ Add Job</strong> to get started.</p>
+        </div>
+
+        <!-- Job cards -->
+        <div class="jobs-grid" th:if="${!#lists.isEmpty(jobs)}">
+            <div th:each="job : ${jobs}" class="job-card">
+                <div class="jc-header">
+                    <span class="jc-name" th:text="${job.jobName}">Job</span>
+                    <span class="jc-wage"
+                          th:text="'$' + ${#numbers.formatDecimal(job.hourlyWage,1,2)} + ' / hr'">
+                        $0/hr
+                    </span>
+                </div>
+
+                <div class="jc-stats">
+                    <div class="jc-stat">
+                        <div class="sl">Total Hours</div>
+                        <div class="sv"
+                             th:text="${#numbers.formatDecimal(job.totalHours,1,1)} + ' hrs'">
+                            0.0 hrs
+                        </div>
+                    </div>
+                    <div class="jc-stat">
+                        <div class="sl">Total Earned</div>
+                        <div class="sv red"
+                             th:text="'$' + ${#numbers.formatDecimal(job.totalEarned,1,2)}">
+                            $0.00
+                        </div>
+                    </div>
+                </div>
+
+                <div class="jc-actions">
+                    <button class="btn-log"
+                            th:data-job-id="${job.id}"
+                            onclick="openLogTab(this)">
+                        Log Hours
+                    </button>
+                    <form th:action="@{/timesheet/job/delete}" method="post" style="display:inline">
+                        <input type="hidden" name="jobId" th:value="${job.id}">
+                        <button type="submit" class="btn-del-job"
+                                onclick="return confirm('Delete this job and all its entries?')">
+                            🗑
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    </div><!-- /tab-jobs -->
+
+    <!-- ══════════════════════════════════════════════════════════
+         TAB 2 — Log Work
+         ══════════════════════════════════════════════════════════ -->
+    <div id="tab-log" class="tab-panel">
+        <div class="log-card">
+            <h2>Log Work Hours</h2>
+
+            <!-- Guard: no jobs yet -->
+            <div th:if="${#lists.isEmpty(jobs)}" style="text-align:center;padding:20px 0">
+                <p style="color:var(--muted);margin-bottom:16px">
+                    You need at least one job before logging work.
+                </p>
+                <button class="btn-red" onclick="switchTab('jobs')">+ Add a Job First</button>
+            </div>
+
+            <form th:if="${!#lists.isEmpty(jobs)}"
+                  th:action="@{/timesheet/work/save}" method="post"
+                  class="log-form" id="log-work-form">
+
+                <!-- Job selector -->
+                <div>
+                    <span class="field-label">Job</span>
+                    <select name="jobId" id="job-select" class="field-input"
+                            onchange="updatePreview()">
+                        <option value="" disabled selected>— select a job —</option>
+                        <option th:each="job : ${jobs}"
+                                th:value="${job.id}"
+                                th:text="${job.jobName} + ' ($' + ${#numbers.formatDecimal(job.hourlyWage,1,2)} + '/hr)'"
+                                th:data-wage="${job.hourlyWage}">
+                            Job
+                        </option>
                     </select>
-                </td>
-                <td>
-                    <input type="date" name="workDate" value="${todayDate}" required>
-                </td>
-                <td>
-                    <input type="number" name="hoursWorked" step="0.01" min="0" placeholder="5.0" required>
-                </td>
-                <td>
-                    <input type="text" name="notes" placeholder="Evening shift">
-                </td>
-                <td style="text-align:center;">
-                    <button type="button" class="delete-btn" onclick="removeRow(this)">Delete</button>
-                </td>
-            `;
-            tbody.appendChild(row);
+                </div>
+
+                <!-- Date -->
+                <div>
+                    <span class="field-label">Date Worked</span>
+                    <input type="date" name="workDate" id="work-date" class="field-input" required>
+                </div>
+
+                <!-- Hours -->
+                <div>
+                    <span class="field-label">Hours Worked</span>
+                    <input type="number" name="hoursWorked" id="hours-input"
+                           class="field-input" step="0.5" min="0.5" max="24"
+                           placeholder="0" oninput="updatePreview()" required>
+                </div>
+
+                <!-- Earnings preview -->
+                <div class="earnings-preview" id="earnings-preview">
+                    <span class="ep-label">Earnings Preview</span>
+                    <span class="ep-value" id="ep-value">$0.00</span>
+                </div>
+
+                <!-- Notes -->
+                <div>
+                    <span class="field-label">Notes <span style="font-weight:400;text-transform:none;letter-spacing:0">(optional)</span></span>
+                    <input type="text" name="notes" class="field-input"
+                           placeholder="e.g. Covered evening shift">
+                </div>
+
+                <button type="submit" class="btn-save-entry">Save Work Entry</button>
+            </form>
+        </div>
+    </div><!-- /tab-log -->
+
+    <!-- ══════════════════════════════════════════════════════════
+         TAB 3 — History
+         ══════════════════════════════════════════════════════════ -->
+    <div id="tab-history" class="tab-panel">
+
+        <div class="hist-toolbar">
+            <h2>Work History</h2>
+            <select class="field-input filter-select" id="hist-filter"
+                    onchange="filterHistory()" th:if="${!#lists.isEmpty(allEntries)}">
+                <option value="all">All Jobs</option>
+                <option th:each="job : ${jobs}"
+                        th:value="${job.id}"
+                        th:text="${job.jobName}">Job</option>
+            </select>
+        </div>
+
+        <div class="empty" th:if="${#lists.isEmpty(allEntries)}">
+            <div class="ei">📂</div>
+            <p>No work entries yet. Use <strong>Log Work</strong> to add your first entry.</p>
+        </div>
+
+        <div class="hist-table-wrap" th:if="${!#lists.isEmpty(allEntries)}">
+            <table class="hist-table" id="hist-table">
+                <thead>
+                    <tr>
+                        <th>Job</th>
+                        <th>Date</th>
+                        <th>Hours</th>
+                        <th>Rate</th>
+                        <th>Earned</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="e : ${allEntries}"
+                        th:data-job-id="${e.jobId}"
+                        class="hist-row">
+                        <td th:text="${e.jobName != null ? e.jobName : '—'}">—</td>
+                        <td class="td-muted"
+                            th:text="${e.workDate != null ?
+                                #dates.format(e.workDate,'MMM dd, yyyy') : '—'}">—</td>
+                        <td th:text="${#numbers.formatDecimal(e.hoursWorked,1,1)} + ' hrs'">0</td>
+                        <td class="td-muted"
+                            th:text="e.hourlyWage != null ?
+                                '$' + ${#numbers.formatDecimal(e.hourlyWage,1,2)} + '/hr' : '—'">—</td>
+                        <td class="td-red"
+                            th:text="e.earnedAmount != null ?
+                                '$' + ${#numbers.formatDecimal(e.earnedAmount,1,2)} : '—'">—</td>
+                        <td>
+                            <form th:action="@{/timesheet/work/delete}" method="post"
+                                  style="display:inline">
+                                <input type="hidden" name="entryId" th:value="${e.id}">
+                                <button type="submit" class="btn-del-entry"
+                                        onclick="return confirm('Delete this entry?')">✕</button>
+                            </form>
+                        </td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr class="hist-total-row" id="hist-total-row">
+                        <td colspan="2" style="color:var(--muted)">Showing all entries</td>
+                        <td id="total-hours-cell" style="font-weight:700">—</td>
+                        <td></td>
+                        <td id="total-earned-cell" class="td-red">—</td>
+                        <td></td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+    </div><!-- /tab-history -->
+
+</div><!-- /container -->
+
+<script>
+    // ── Tab switching ──────────────────────────────────────────────────────────
+    function switchTab(name) {
+        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(b => {
+            b.classList.toggle('active', b.dataset.tab === name);
+        });
+        const panel = document.getElementById('tab-' + name);
+        if (panel) panel.classList.add('active');
+    }
+
+    // ── Add-job panel toggle ───────────────────────────────────────────────────
+    function toggleAddPanel() {
+        const panel = document.getElementById('add-panel');
+        const icon  = document.getElementById('add-btn-icon');
+        const open  = panel.classList.toggle('open');
+        icon.textContent = open ? '✕' : '+';
+        if (open) setTimeout(() => panel.querySelector('input')?.focus(), 360);
+    }
+
+    // ── "Log Hours" on a job card → switch to Log Work and pre-select job ─────
+    function openLogTab(btn) {
+        switchTab('log');
+        const sel = document.getElementById('job-select');
+        if (sel) { sel.value = btn.dataset.jobId; updatePreview(); }
+    }
+
+    // ── Earnings preview ───────────────────────────────────────────────────────
+    function updatePreview() {
+        const sel    = document.getElementById('job-select');
+        const hours  = parseFloat(document.getElementById('hours-input')?.value) || 0;
+        const option = sel?.options[sel.selectedIndex];
+        const wage   = option ? parseFloat(option.dataset.wage) || 0 : 0;
+        const earned = hours * wage;
+
+        const val = document.getElementById('ep-value');
+        const box = document.getElementById('earnings-preview');
+        if (val) {
+            val.textContent = '$' + earned.toFixed(2);
+            val.classList.toggle('lit', earned > 0);
+        }
+        if (box) box.classList.toggle('lit', earned > 0);
+    }
+
+    // ── History filter + footer totals ─────────────────────────────────────────
+    function filterHistory() {
+        const filter = document.getElementById('hist-filter')?.value || 'all';
+        const rows   = document.querySelectorAll('#hist-table .hist-row');
+        let totalHours = 0, totalEarned = 0, visible = 0;
+
+        rows.forEach(row => {
+            const match = filter === 'all' || row.dataset.jobId === filter;
+            row.style.display = match ? '' : 'none';
+            if (match) {
+                visible++;
+                const hCell = row.cells[2]?.textContent?.replace(' hrs', '').trim();
+                totalHours += parseFloat(hCell) || 0;
+                const eCell = row.cells[4]?.textContent?.replace('$', '').trim();
+                totalEarned += parseFloat(eCell) || 0;
+            }
+        });
+
+        const label = document.getElementById('hist-total-row')?.cells[0];
+        if (label) {
+            label.textContent = visible === rows.length
+                ? 'All ' + visible + ' entries'
+                : visible + ' of ' + rows.length + ' entries';
+        }
+        const hTot = document.getElementById('total-hours-cell');
+        const eTot = document.getElementById('total-earned-cell');
+        if (hTot) hTot.textContent = totalHours.toFixed(1) + ' hrs';
+        if (eTot) eTot.textContent = '$' + totalEarned.toFixed(2);
+    }
+
+    // ── Initialise ────────────────────────────────────────────────────────────
+    document.addEventListener('DOMContentLoaded', () => {
+        const today = new Date().toISOString().split('T')[0];
+        const dateInput = document.getElementById('work-date');
+        if (dateInput && !dateInput.value) dateInput.value = today;
+
+        // Activate the correct tab (flash or URL param)
+        const tabHint = document.getElementById('active-tab-hint')?.value || 'jobs';
+        switchTab(tabHint);
+
+        // Pre-select job when coming from "Log Hours" on the income overview
+        const jobHint = document.getElementById('selected-job-hint')?.value;
+        if (jobHint) {
+            const sel = document.getElementById('job-select');
+            if (sel) { sel.value = jobHint; updatePreview(); }
         }
 
-        function removeRow(button) {
-            const tbody = document.getElementById('entry-body');
-            if (!tbody) return;
-            const row = button.closest('tr');
-            if (!row || !tbody.contains(row)) return;
-            if (tbody.querySelectorAll('tr').length <= 1) return;
-            row.remove();
-        }
-    </script>
+        filterHistory();
+    });
+</script>
+<script src="/js/app.js"></script>
 </body>
 </html>

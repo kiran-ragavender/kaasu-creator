@@ -5,7 +5,6 @@
     <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-    <!-- Navbar -->
     <nav class="navbar">
         <a href="/dashboard" class="navbar-brand">💸 Kaasu Creator</a>
         <div class="navbar-links">
@@ -13,141 +12,108 @@
             <a href="/income">Income</a>
             <a href="/budget">Expenses</a>
             <a href="/calculator">Calculator</a>
+            <a href="/ai-roadmap">AI Roadmap</a>
             <a href="/profile">Profile</a>
-            <a href="/logout" style="color:var(--accent-pink);">Logout</a>
+            <a href="/logout" style="color:var(--red);">Logout</a>
         </div>
     </nav>
 
     <div class="container">
-        <!-- Welcome banner -->
-        <div style="text-align:center;padding:40px 0;">
-            <h1 style="font-size:2.5rem;color:var(--text-primary);">
-                Welcome back, <span style="color:var(--accent-pink);" th:text="${userName}">User</span>!
+
+        <!-- Welcome -->
+        <div style="padding: 32px 0 24px;">
+            <p class="section-label">Welcome back</p>
+            <h1 style="font-size:2rem;font-weight:800;color:var(--text-primary);margin:0 0 6px;letter-spacing:-0.5px;">
+                <span style="color:var(--red);" th:text="${userName}">User</span> 👋
             </h1>
-            <p style="color:var(--text-secondary);font-size:1.1rem;margin-top:10px;">
-                🌟 Kaasu-chan says: "Let's make today financially amazing!"
+            <p style="color:var(--muted);font-size:0.9rem;margin:0;">
+                Kaasu-chan says: "Let's make today financially amazing!"
             </p>
         </div>
 
         <!-- Financial Summary -->
-        <div class="card" style="margin-bottom:30px;">
-            <h2>Financial Overview</h2>
-            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px;margin-top:20px;">
-                <div style="text-align:center;padding:20px;background:linear-gradient(135deg, var(--accent-cyan), var(--accent-cyan-dark));border-radius:12px;color:white;">
-                    <div style="font-size:2rem;margin-bottom:10px;">💰</div>
-                    <h3 style="margin:0;font-size:1.5rem;">Total Income</h3>
-                    <p style="margin:5px 0 0 0;font-size:1.2rem;font-weight:bold;">
-                        $<span th:text="${#numbers.formatDecimal(totalIncome, 1, 2)}">0.00</span>
-                    </p>
-                </div>
-
-                <div style="text-align:center;padding:20px;background:linear-gradient(135deg, var(--accent-pink), var(--accent-pink-dark));border-radius:12px;color:white;">
-                    <div style="font-size:2rem;margin-bottom:10px;">💸</div>
-                    <h3 style="margin:0;font-size:1.5rem;">Total Expenses</h3>
-                    <p style="margin:5px 0 0 0;font-size:1.2rem;font-weight:bold;">
-                        $<span th:text="${#numbers.formatDecimal(totalExpenses, 1, 2)}">0.00</span>
-                    </p>
-                </div>
-
-                <div style="text-align:center;padding:20px;background:linear-gradient(135deg, var(--accent-purple), var(--accent-purple-dark));border-radius:12px;color:white;">
-                    <div style="font-size:2rem;margin-bottom:10px;">⚖️</div>
-                    <h3 style="margin:0;font-size:1.5rem;">Current Balance</h3>
-                    <p style="margin:5px 0 0 0;font-size:1.2rem;font-weight:bold;">
-                        $<span th:text="${#numbers.formatDecimal(currentBalance, 1, 2)}">0.00</span>
-                    </p>
-                </div>
+        <div class="stat-grid">
+            <div class="stat-card">
+                <span class="sc-icon">💰</span>
+                <span class="sc-label">Total Income</span>
+                <span class="sc-value positive">$<span th:text="${#numbers.formatDecimal(totalIncome, 1, 2)}">0.00</span></span>
+            </div>
+            <div class="stat-card">
+                <span class="sc-icon">💸</span>
+                <span class="sc-label">Total Expenses</span>
+                <span class="sc-value">$<span th:text="${#numbers.formatDecimal(totalExpenses, 1, 2)}">0.00</span></span>
+            </div>
+            <div class="stat-card">
+                <span class="sc-icon">⚖️</span>
+                <span class="sc-label">Current Balance</span>
+                <span class="sc-value"
+                      th:classappend="${currentBalance >= 0} ? 'positive' : 'negative'">
+                    $<span th:text="${#numbers.formatDecimal(currentBalance, 1, 2)}">0.00</span>
+                </span>
             </div>
         </div>
 
-        <!-- Dashboard grid -->
-        <div class="dashboard-grid">
-            <!-- Income Card -->
-            <a href="/income" class="mini-card">
-                <div style="font-size:2.5rem;margin-bottom:10px;">💰</div>
-                <h3>Income Tracker</h3>
-                <p>Track your earnings from salary, freelance, business, and investments.</p>
-                <div style="margin-top:15px;color:var(--accent-cyan);">Add Income →</div>
+        <!-- Feature Grid -->
+        <p class="section-label">Features</p>
+        <div class="feature-grid">
+            <a href="/income" class="feature-card">
+                <span class="fc-icon">💰</span>
+                <p class="fc-title">Income Tracker</p>
+                <p class="fc-desc">Log jobs, track hours, add custom income, and manage your timesheet — all in one place.</p>
+                <span class="fc-link">Manage Income →</span>
             </a>
-
-            <!-- Budget Card -->
-            <a href="/budget" class="mini-card">
-                <div style="font-size:2.5rem;margin-bottom:10px;">💸</div>
-                <h3>Expense Tracker</h3>
-                <p>Track your expenses by category. Monitor your spending habits.</p>
-                <div style="margin-top:15px;color:var(--accent-cyan);">Manage Expenses →</div>
+            <a href="/budget" class="feature-card">
+                <span class="fc-icon">💸</span>
+                <p class="fc-title">Expense Tracker</p>
+                <p class="fc-desc">Add expenses by category and see your spending breakdown visually.</p>
+                <span class="fc-link">Track Expenses →</span>
             </a>
-
-            <!-- Goals Card -->
-            <a href="/goal" class="mini-card">
-                <div style="font-size:2.5rem;margin-bottom:10px;">🎯</div>
-                <h3>Savings Goals</h3>
-                <p>Set savings goals with deadlines. Get a week-by-week roadmap to stay on track.</p>
-                <div style="margin-top:15px;color:var(--accent-cyan);">View Goals →</div>
+            <a href="/goal" class="feature-card">
+                <span class="fc-icon">🎯</span>
+                <p class="fc-title">Savings Goals</p>
+                <p class="fc-desc">Set goals with deadlines and get a week-by-week savings roadmap.</p>
+                <span class="fc-link">View Goals →</span>
             </a>
-
-            <!-- Calculator Card -->
-            <a href="/calculator" class="mini-card">
-                <div style="font-size:2.5rem;margin-bottom:10px;">🧮</div>
-                <h3>Basic Calculator</h3>
-                <p>Simple calculator for basic math operations.</p>
-                <div style="margin-top:15px;color:var(--accent-cyan);">Calculate →</div>
+            <a href="/ai-roadmap" class="feature-card">
+                <span class="fc-icon">🤖</span>
+                <p class="fc-title">AI Financial Roadmap</p>
+                <p class="fc-desc">Get a personalized action plan from AI based on your income and goals.</p>
+                <span class="fc-link">Generate Roadmap →</span>
             </a>
-
-            <!-- Financial Calculator Card -->
-            <a href="/financial-calculator" class="mini-card">
-                <div style="font-size:2.5rem;margin-bottom:10px;">📊</div>
-                <h3>Financial Calculator</h3>
-                <p>Advanced tools for savings goals, compound interest, and budget analysis.</p>
-                <div style="margin-top:15px;color:var(--accent-cyan);">Financial Tools →</div>
+            <a href="/financial-calculator" class="feature-card">
+                <span class="fc-icon">📊</span>
+                <p class="fc-title">Financial Calculator</p>
+                <p class="fc-desc">Savings timelines, compound interest, and budget ratio tools.</p>
+                <span class="fc-link">Open Tools →</span>
             </a>
-
-            <!-- AI Roadmap Card -->
-            <a href="/ai-roadmap" class="mini-card">
-                <div style="font-size:2.5rem;margin-bottom:10px;">🤖</div>
-                <h3>AI Financial Roadmap</h3>
-                <p>Get personalized financial advice and budgeting strategies from AI.</p>
-                <div style="margin-top:15px;color:var(--accent-purple);">Get AI Advice →</div>
+            <a href="/calculator" class="feature-card">
+                <span class="fc-icon">🧮</span>
+                <p class="fc-title">Calculator</p>
+                <p class="fc-desc">Quick calculator for everyday math with full keyboard support.</p>
+                <span class="fc-link">Calculate →</span>
             </a>
         </div>
 
-        <!-- Quick stats section -->
-        <div class="card" style="margin-top:30px;">
-            <h2>Quick Overview</h2>
-            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:20px;">
-                <div style="text-align:center;">
-                    <div style="font-size:2rem;color:var(--accent-pink);">📊</div>
-                    <p style="color:var(--text-secondary);font-size:0.9rem;">Track daily spending</p>
-                </div>
-                <div style="text-align:center;">
-                    <div style="font-size:2rem;color:var(--accent-purple);">🗓️</div>
-                    <p style="color:var(--text-secondary);font-size:0.9rem;">Plan weekly savings</p>
-                </div>
-                <div style="text-align:center;">
-                    <div style="font-size:2rem;color:var(--accent-cyan);">📈</div>
-                    <p style="color:var(--text-secondary);font-size:0.9rem;">Watch your growth</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Account Settings -->
-        <div class="card" style="margin-top:30px;border:1px solid rgba(255,61,0,0.3);">
-            <h2 style="color:var(--danger);">⚠️ Account Settings</h2>
-            <p style="color:var(--text-secondary);margin-bottom:20px;">
-                Once you delete your account, there is no going back. All your data will be permanently removed.
-            </p>
-            <form th:action="@{/dashboard/delete-account}" method="post" onsubmit="return confirm('Are you sure you want to delete your account? This action cannot be undone.');">
-                <button type="submit" class="btn btn-danger">Delete My Account</button>
+        <!-- Danger Zone -->
+        <div class="danger-zone">
+            <p class="dz-title">⚠ Account Settings</p>
+            <p class="dz-desc">Permanently delete your account and all associated data. This cannot be undone.</p>
+            <form th:action="@{/dashboard/delete-account}" method="post"
+                  onsubmit="return confirm('Delete your account permanently? All data will be lost.');">
+                <button type="submit" class="btn-danger-outline">Delete My Account</button>
             </form>
         </div>
+
     </div>
 
-    <!-- Kaasu-chan mascot -->
     <div class="kaasu-mascot">
         💁‍♀️
         <div class="kaasu-speech">
             <strong>Kaasu-chan:</strong><br>
-            "Your financial journey starts here! Click around to explore~"
+            "Your financial journey starts here!"
         </div>
     </div>
+
+    <script src="/js/app.js"></script>
 </body>
 </html>

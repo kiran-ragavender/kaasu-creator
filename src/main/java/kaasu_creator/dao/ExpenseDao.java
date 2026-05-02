@@ -25,7 +25,7 @@ public class ExpenseDao {
         rs.getString("title"),
         rs.getString("category"),
         rs.getBigDecimal("amount"),
-        rs.getTimestamp("date")
+        rs.getTimestamp("date") != null ? rs.getTimestamp("date").toLocalDateTime() : null
     );
 
     // INSERT a new expense

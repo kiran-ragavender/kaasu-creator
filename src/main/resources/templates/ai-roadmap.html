@@ -95,10 +95,11 @@
         }
 
         .roadmap-content {
-            line-height: 1.6;
-            white-space: pre-wrap;
+            line-height: 1.8;
             font-size: 1rem;
         }
+        .roadmap-content p { margin: 0 0 10px 0; }
+        .roadmap-content strong { font-weight: 700; }
 
         .error-message {
             background: rgba(244, 67, 54, 0.1);
@@ -151,29 +152,23 @@
             <a href="/income">Income</a>
             <a href="/budget">Expenses</a>
             <a href="/calculator">Calculator</a>
+            <a href="/ai-roadmap">AI Roadmap</a>
             <a href="/profile">Profile</a>
             <a href="/logout" style="color:var(--accent-pink);">Logout</a>
         </div>
     </nav>
 
     <div class="container">
-        <!-- Header -->
-        <div style="text-align:center;padding:40px 0;">
-            <div style="font-size:4rem;margin-bottom:20px;">🤖</div>
-            <h1 style="font-size:2.5rem;color:var(--text-primary);">
-                AI Financial Roadmap
-            </h1>
-            <p style="color:var(--text-secondary);font-size:1.1rem;margin-top:10px;">
-                🌟 Kaasu-chan's AI assistant will analyze your finances and create a personalized roadmap!
-            </p>
+        <button onclick="history.back()" class="back-btn">← Back</button>
+        <div class="page-header">
+            <span class="ph-icon">🤖</span>
+            <h1 class="ph-title">AI Financial Roadmap</h1>
+            <p class="ph-sub">Get a personalized action plan based on your income, expenses, and goals.</p>
         </div>
 
         <!-- AI Roadmap Form -->
         <div class="roadmap-form">
-            <h3>📊 Tell Me About Your Finances</h3>
-            <p style="color:var(--text-secondary);font-size:0.9rem;margin-bottom:20px;">
-                Share your monthly income and expenses, and I'll create a personalized financial roadmap just for you.
-            </p>
+            <h3>📊 Your Finances</h3>
 
             <form th:action="@{/generate-roadmap}" method="post" id="roadmapForm">
                 <div class="form-grid">
@@ -217,7 +212,8 @@
         <!-- AI Roadmap Result -->
         <div th:if="${generated}" class="roadmap-result">
             <h4>🎯 Your Personalized AI Roadmap</h4>
-            <div class="roadmap-content" th:text="${roadmap}">AI-generated roadmap will appear here...</div>
+            <div class="roadmap-content" id="roadmap-content"
+                 th:data-raw="${roadmap}"></div>
         </div>
 
         <!-- Error Message -->
@@ -236,26 +232,27 @@
     <script src="/js/app.js"></script>
 
     <script>
-        // Handle form submission with loading state
-        document.getElementById('roadmapForm').addEventListener('submit', function(e) {
-            const generateBtn = document.getElementById('generateBtn');
-            const loadingState = document.getElementById('loadingState');
-
-            // Show loading state
-            generateBtn.style.display = 'none';
-            loadingState.style.display = 'block';
-
-            // The form will submit normally, but we show loading state
+        document.getElementById('roadmapForm').addEventListener('submit', function() {
+            document.getElementById('generateBtn').style.display = 'none';
+            document.getElementById('loadingState').style.display = 'block';
         });
 
-        // Show loading state if there are validation errors
         document.addEventListener('DOMContentLoaded', function() {
-            const errorElement = document.querySelector('.error-message');
-            if (errorElement && errorElement.textContent.trim() !== '') {
-                const generateBtn = document.getElementById('generateBtn');
-                const loadingState = document.getElementById('loadingState');
-                generateBtn.style.display = 'block';
-                loadingState.style.display = 'none';
+            document.getElementById('generateBtn').style.display = 'block';
+            document.getElementById('loadingState').style.display = 'none';
+
+            // Render markdown-like formatting from AI response
+            const el = document.getElementById('roadmap-content');
+            if (el) {
+                let text = el.dataset.raw || '';
+                // Headers: ### text
+                text = text.replace(/^###\s+(.+)$/gm, '<h3 style="margin:12px 0 6px;font-size:1.1rem;">$1</h3>');
+                // Bold: **text**
+                text = text.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+                // Numbered lines: keep as-is but wrap in <p>
+                text = text.replace(/\n{2,}/g, '</p><p>');
+                text = text.replace(/\n/g, '<br>');
+                el.innerHTML = '<p>' + text + '</p>';
             }
         });
     </script>

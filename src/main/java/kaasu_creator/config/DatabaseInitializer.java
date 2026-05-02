@@ -69,7 +69,8 @@ public class DatabaseInitializer {
             "ALTER TABLE expenses         ADD COLUMN IF NOT EXISTS user_id BIGINT",
             "ALTER TABLE expenses         ADD COLUMN IF NOT EXISTS date TIMESTAMP DEFAULT CURRENT_TIMESTAMP",
             "ALTER TABLE goals            ADD COLUMN IF NOT EXISTS created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP",
-            "ALTER TABLE timesheet_entries ADD COLUMN IF NOT EXISTS job_id BIGINT REFERENCES jobs(id) ON DELETE SET NULL"
+            "ALTER TABLE timesheet_entries ADD COLUMN IF NOT EXISTS job_id BIGINT REFERENCES jobs(id) ON DELETE SET NULL",
+            "ALTER TABLE incomes          ADD COLUMN IF NOT EXISTS category VARCHAR(100)"
         };
 
         for (String sql : patches) {

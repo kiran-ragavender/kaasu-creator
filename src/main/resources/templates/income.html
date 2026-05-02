@@ -3,6 +3,62 @@
 <head>
     <title>Income Tracker - Kaasu Creator</title>
     <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .timesheet-cta {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 24px 28px;
+            margin-bottom: 28px;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        .timesheet-cta-left h2 {
+            margin: 0 0 6px;
+            font-size: 1.2rem;
+            color: var(--text-primary);
+            font-weight: 700;
+        }
+        .timesheet-cta-left p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 0.9rem;
+        }
+        .section-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 24px;
+            margin-bottom: 28px;
+        }
+        .section-card h2 {
+            margin: 0 0 8px;
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        .section-card .section-subtitle {
+            color: var(--muted);
+            font-size: 0.88rem;
+            margin: 0 0 20px;
+        }
+        .recent-activity-row {
+            display: grid;
+            grid-template-columns: 1fr auto auto;
+            gap: 8px 16px;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        .recent-activity-row:last-child { border-bottom: none; }
+        .ra-label { font-size: 0.92rem; color: var(--text-primary); }
+        .ra-sub { font-size: 0.8rem; color: var(--muted); }
+        .ra-amount { font-size: 0.95rem; font-weight: 700; color: var(--red); white-space: nowrap; }
+        .ra-date { font-size: 0.82rem; color: var(--muted); white-space: nowrap; }
+    </style>
 </head>
 <body>
 
@@ -12,19 +68,20 @@
     <div class="navbar-links">
         <a href="/dashboard">Dashboard</a>
         <a href="/income">Income</a>
-        <a href="/timesheet">Timesheet</a>
         <a href="/budget">Expenses</a>
         <a href="/calculator">Calculator</a>
+        <a href="/ai-roadmap">AI Roadmap</a>
         <a href="/profile">Profile</a>
         <a href="/logout" style="color:var(--red)">Logout</a>
     </div>
 </nav>
 
-<!-- Hidden hints for JavaScript -->
-<input type="hidden" id="active-tab-hint"  th:value="${activeTab}"     value="jobs">
-<input type="hidden" id="selected-job-hint" th:value="${selectedJobId}" value="">
-
 <div class="container">
+
+    <div style="margin-bottom:16px;">
+        <button onclick="history.back()" class="btn btn-secondary"
+                style="font-size:0.9rem;padding:6px 14px;">← Back</button>
+    </div>
 
     <!-- Flash messages -->
     <div th:if="${successMessage}" class="flash flash-ok">
@@ -38,373 +95,202 @@
     <div class="hero">
         <span class="icon">💰</span>
         <h1>Income <span>Tracker</span></h1>
-        <p>Set up jobs once · Log hours · Track earnings</p>
+        <p>Your income overview — timesheet earnings, custom income, and recent activity</p>
     </div>
 
-    <!-- Summary bar (only shown when jobs exist) -->
-    <div class="summary-bar" th:if="${!#lists.isEmpty(jobs)}">
-        <div>
-            <div class="sum-label">Total All-Time Earned</div>
-            <div class="sum-value"
-                 th:text="'$' + ${#numbers.formatDecimal(totalEarned, 1, 2)}">$0.00</div>
+    <!-- ── Summary Stats ──────────────────────────────────────────────────────── -->
+    <div class="stat-grid" style="margin-bottom:28px;">
+        <div class="stat-card">
+            <span class="sc-icon">⏱️</span>
+            <span class="sc-label">Timesheet Earned</span>
+            <span class="sc-value positive"
+                  th:text="'$' + ${#numbers.formatDecimal(totalEarned, 1, 2)}">$0.00</span>
         </div>
-        <div class="sum-stats">
-            <div class="sum-stat">
-                <div class="sv" th:text="${#lists.size(jobs)}">0</div>
-                <div class="sl">Jobs</div>
-            </div>
-            <div class="sum-stat">
-                <div class="sv" th:text="${#lists.size(allEntries)}">0</div>
-                <div class="sl">Entries</div>
-            </div>
+        <div class="stat-card">
+            <span class="sc-icon">💵</span>
+            <span class="sc-label">Custom Income</span>
+            <span class="sc-value positive"
+                  th:text="'$' + ${#numbers.formatDecimal(totalCustomIncome, 1, 2)}">$0.00</span>
+        </div>
+        <div class="stat-card">
+            <span class="sc-icon">👔</span>
+            <span class="sc-label">Jobs</span>
+            <span class="sc-value" th:text="${#lists.size(jobs)}">0</span>
+        </div>
+        <div class="stat-card">
+            <span class="sc-icon">📋</span>
+            <span class="sc-label">Work Entries</span>
+            <span class="sc-value" th:text="${#lists.size(allEntries)}">0</span>
         </div>
     </div>
 
-    <!-- ── Tab Navigation ── -->
-    <div class="tab-nav">
-        <button class="tab-btn" data-tab="jobs"    onclick="switchTab('jobs')">My Jobs</button>
-        <button class="tab-btn" data-tab="log"     onclick="switchTab('log')">Log Work</button>
-        <button class="tab-btn" data-tab="history" onclick="switchTab('history')">History</button>
+    <!-- ── Open Timesheet CTA ─────────────────────────────────────────────────── -->
+    <div class="timesheet-cta">
+        <div class="timesheet-cta-left">
+            <h2>🗓️ Timesheet Workspace</h2>
+            <p>Manage your jobs, log work hours, and view your full work history.</p>
+        </div>
+        <a href="/timesheet" class="btn-red"
+           style="display:inline-block;text-decoration:none;padding:12px 24px;
+                  border-radius:12px;font-weight:700;white-space:nowrap;">
+            Open Timesheet →
+        </a>
     </div>
 
-    <!-- ══════════════════════════════════════════════════════════
-         TAB 1 — My Jobs
-         ══════════════════════════════════════════════════════════ -->
-    <div id="tab-jobs" class="tab-panel">
+    <!-- ── Custom Income ──────────────────────────────────────────────────────── -->
+    <div class="section-card">
+        <h2>Custom Income</h2>
+        <p class="section-subtitle">
+            Record bonuses, freelance pay, gifts, rental income, or any one-time income source.
+        </p>
 
-        <div class="top-row">
-            <span class="section-title"
-                  th:text="${#lists.isEmpty(jobs) ? 'No jobs yet' :
-                             #lists.size(jobs) + ' active job' + (#lists.size(jobs) == 1 ? '' : 's')}">
-                Jobs
-            </span>
-            <button class="btn-red" onclick="toggleAddPanel()">
-                <span id="add-btn-icon">+</span> Add Job
-            </button>
-        </div>
+        <!-- Add form -->
+        <form th:action="@{/income/custom/save}" method="post" class="log-form"
+              style="margin-bottom:28px;" id="custom-income-form">
 
-        <!-- Add job panel (collapsible) -->
-        <div class="add-panel" id="add-panel">
-            <h3>New Job</h3>
-            <form th:action="@{/income/job/save}" method="post" class="add-form">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
                 <div>
-                    <span class="field-label">Job Name</span>
-                    <input type="text" name="jobName" class="field-input"
-                           placeholder="e.g. Barista, Tutor" required>
+                    <span class="field-label">Source / Title</span>
+                    <input type="text" name="source" class="field-input"
+                           placeholder="e.g. Freelance project, Bonus, Gift" required>
                 </div>
                 <div>
-                    <span class="field-label">Hourly Wage ($)</span>
-                    <input type="number" name="hourlyWage" class="field-input"
-                           step="0.01" min="0.01" placeholder="15.00" required>
-                </div>
-                <button type="submit" class="btn-red">Save Job</button>
-            </form>
-        </div>
-
-        <!-- Empty state -->
-        <div class="empty" th:if="${#lists.isEmpty(jobs)}">
-            <div class="ei">👔</div>
-            <p>No jobs yet. Click <strong>+ Add Job</strong> to get started.</p>
-        </div>
-
-        <!-- Job cards -->
-        <div class="jobs-grid" th:if="${!#lists.isEmpty(jobs)}">
-            <div th:each="job : ${jobs}" class="job-card">
-                <div class="jc-header">
-                    <span class="jc-name" th:text="${job.jobName}">Job</span>
-                    <span class="jc-wage"
-                          th:text="'$' + ${#numbers.formatDecimal(job.hourlyWage,1,2)} + ' / hr'">
-                        $0/hr
-                    </span>
-                </div>
-
-                <div class="jc-stats">
-                    <div class="jc-stat">
-                        <div class="sl">Total Hours</div>
-                        <div class="sv"
-                             th:text="${#numbers.formatDecimal(job.totalHours,1,1)} + ' hrs'">
-                            0.0 hrs
-                        </div>
-                    </div>
-                    <div class="jc-stat">
-                        <div class="sl">Total Earned</div>
-                        <div class="sv red"
-                             th:text="'$' + ${#numbers.formatDecimal(job.totalEarned,1,2)}">
-                            $0.00
-                        </div>
-                    </div>
-                </div>
-
-                <div class="jc-actions">
-                    <button class="btn-log"
-                            th:data-job-id="${job.id}"
-                            onclick="openLogTab(this)">
-                        Log Hours
-                    </button>
-                    <form th:action="@{/income/job/delete}" method="post"
-                          style="display:inline">
-                        <input type="hidden" name="jobId" th:value="${job.id}">
-                        <button type="submit" class="btn-del-job"
-                                onclick="return confirm('Delete this job and all its entries?')">
-                            🗑
-                        </button>
-                    </form>
-                </div>
-            </div>
-        </div>
-
-    </div><!-- /tab-jobs -->
-
-    <!-- ══════════════════════════════════════════════════════════
-         TAB 2 — Log Work
-         ══════════════════════════════════════════════════════════ -->
-    <div id="tab-log" class="tab-panel">
-        <div class="log-card">
-            <h2>Log Work Hours</h2>
-
-            <!-- No jobs guard -->
-            <div th:if="${#lists.isEmpty(jobs)}" style="text-align:center;padding:20px 0">
-                <p style="color:var(--muted);margin-bottom:16px">
-                    You need at least one job before logging work.
-                </p>
-                <button class="btn-red" onclick="switchTab('jobs')">
-                    + Add a Job First
-                </button>
-            </div>
-
-            <form th:if="${!#lists.isEmpty(jobs)}"
-                  th:action="@{/income/work/save}" method="post"
-                  class="log-form" id="log-work-form">
-
-                <!-- Job selector -->
-                <div>
-                    <span class="field-label">Job</span>
-                    <select name="jobId" id="job-select" class="field-input"
-                            onchange="updatePreview()">
-                        <option value="" disabled selected>— select a job —</option>
-                        <option th:each="job : ${jobs}"
-                                th:value="${job.id}"
-                                th:text="${job.jobName} + ' ($' + ${#numbers.formatDecimal(job.hourlyWage,1,2)} + '/hr)'"
-                                th:data-wage="${job.hourlyWage}">
-                            Job
-                        </option>
+                    <span class="field-label">Category <span style="font-weight:400;text-transform:none;letter-spacing:0">(optional)</span></span>
+                    <select name="category" class="field-input">
+                        <option value="">— select a category —</option>
+                        <option value="Bonus">Bonus</option>
+                        <option value="Freelance">Freelance</option>
+                        <option value="Gift">Gift</option>
+                        <option value="Rental Income">Rental Income</option>
+                        <option value="Side Hustle">Side Hustle</option>
+                        <option value="Investment">Investment</option>
+                        <option value="Lottery / Prize">Lottery / Prize</option>
+                        <option value="Refund">Refund</option>
+                        <option value="Other">Other</option>
                     </select>
                 </div>
+            </div>
 
-                <!-- Date -->
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
                 <div>
-                    <span class="field-label">Date Worked</span>
-                    <input type="date" name="workDate" id="work-date"
+                    <span class="field-label">Amount ($)</span>
+                    <input type="number" name="amount" class="field-input"
+                           step="0.01" min="0.01" placeholder="0.00" required>
+                </div>
+                <div>
+                    <span class="field-label">Date Received</span>
+                    <input type="date" name="incomeDate" id="custom-date"
                            class="field-input" required>
                 </div>
+            </div>
 
-                <!-- Hours -->
-                <div>
-                    <span class="field-label">Hours Worked</span>
-                    <input type="number" name="hoursWorked" id="hours-input"
-                           class="field-input" step="0.5" min="0.5" max="24"
-                           placeholder="0" oninput="updatePreview()" required>
-                </div>
+            <div>
+                <span class="field-label">Notes <span style="font-weight:400;text-transform:none;letter-spacing:0">(optional)</span></span>
+                <input type="text" name="notes" class="field-input"
+                       placeholder="Any extra details">
+            </div>
 
-                <!-- Earnings preview -->
-                <div class="earnings-preview" id="earnings-preview">
-                    <span class="ep-label">Earnings Preview</span>
-                    <span class="ep-value" id="ep-value">$0.00</span>
-                </div>
+            <button type="submit" class="btn-save-entry">Save Income</button>
+        </form>
 
-                <!-- Notes -->
-                <div>
-                    <span class="field-label">Notes <span style="font-weight:400;text-transform:none;letter-spacing:0">(optional)</span></span>
-                    <input type="text" name="notes" class="field-input"
-                           placeholder="e.g. Covered evening shift">
-                </div>
-
-                <button type="submit" class="btn-save-entry">Save Work Entry</button>
-            </form>
-        </div>
-    </div><!-- /tab-log -->
-
-    <!-- ══════════════════════════════════════════════════════════
-         TAB 3 — History
-         ══════════════════════════════════════════════════════════ -->
-    <div id="tab-history" class="tab-panel">
-
-        <div class="hist-toolbar">
-            <h2>Work History</h2>
-            <select class="field-input filter-select" id="hist-filter"
-                    onchange="filterHistory()" th:if="${!#lists.isEmpty(allEntries)}">
-                <option value="all">All Jobs</option>
-                <option th:each="job : ${jobs}"
-                        th:value="${job.id}"
-                        th:text="${job.jobName}">Job</option>
-            </select>
+        <!-- History -->
+        <div class="empty" th:if="${#lists.isEmpty(allCustomIncomes)}">
+            <div class="ei">💵</div>
+            <p>No custom income yet. Add one above!</p>
         </div>
 
-        <!-- Empty -->
-        <div class="empty" th:if="${#lists.isEmpty(allEntries)}">
-            <div class="ei">📂</div>
-            <p>No work entries yet. Log some hours first!</p>
-        </div>
-
-        <!-- History table -->
-        <div class="hist-table-wrap" th:if="${!#lists.isEmpty(allEntries)}">
-            <table class="hist-table" id="hist-table">
+        <div class="hist-table-wrap" th:if="${!#lists.isEmpty(allCustomIncomes)}">
+            <table class="hist-table">
                 <thead>
                     <tr>
-                        <th>Job</th>
+                        <th>Source</th>
+                        <th>Category</th>
                         <th>Date</th>
-                        <th>Hours</th>
-                        <th>Rate</th>
-                        <th>Earned</th>
+                        <th>Amount</th>
+                        <th>Notes</th>
                         <th></th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr th:each="e : ${allEntries}"
-                        th:data-job-id="${e.jobId}"
-                        class="hist-row">
-                        <td th:text="${e.jobName != null ? e.jobName : '—'}">—</td>
+                    <tr th:each="inc : ${allCustomIncomes}" class="hist-row">
+                        <td th:text="${inc.source}">—</td>
                         <td class="td-muted"
-                            th:text="${e.workDate != null ?
-                                #dates.format(e.workDate,'MMM dd, yyyy') : '—'}">—</td>
-                        <td th:text="${#numbers.formatDecimal(e.hoursWorked,1,1)} + ' hrs'">0</td>
+                            th:text="${inc.category != null and !inc.category.isEmpty() ? inc.category : '—'}">—</td>
                         <td class="td-muted"
-                            th:text="e.hourlyWage != null ?
-                                '$' + ${#numbers.formatDecimal(e.hourlyWage,1,2)} + '/hr' : '—'">—</td>
+                            th:text="${inc.incomeDate != null ?
+                                #dates.format(inc.incomeDate,'MMM dd, yyyy') : '—'}">—</td>
                         <td class="td-red"
-                            th:text="e.earnedAmount != null ?
-                                '$' + ${#numbers.formatDecimal(e.earnedAmount,1,2)} : '—'">—</td>
+                            th:text="'$' + ${#numbers.formatDecimal(inc.amount,1,2)}">$0.00</td>
+                        <td class="td-muted"
+                            th:text="${inc.notes != null and !inc.notes.isEmpty() ? inc.notes : '—'}">—</td>
                         <td>
-                            <form th:action="@{/income/work/delete}" method="post"
+                            <form th:action="@{/income/custom/delete}" method="post"
                                   style="display:inline">
-                                <input type="hidden" name="entryId" th:value="${e.id}">
+                                <input type="hidden" name="incomeId" th:value="${inc.id}">
                                 <button type="submit" class="btn-del-entry"
-                                        onclick="return confirm('Delete this entry?')">
-                                    ✕
-                                </button>
+                                        onclick="return confirm('Delete this income entry?')">✕</button>
                             </form>
                         </td>
                     </tr>
                 </tbody>
                 <tfoot>
-                    <tr class="hist-total-row" id="hist-total-row">
-                        <td colspan="2" style="color:var(--muted)">Showing all entries</td>
-                        <td id="total-hours-cell" style="font-weight:700">—</td>
-                        <td></td>
-                        <td id="total-earned-cell" class="td-red">—</td>
-                        <td></td>
+                    <tr class="hist-total-row">
+                        <td colspan="3" style="color:var(--muted)"
+                            th:text="${#lists.size(allCustomIncomes)} + ' entries'">0 entries</td>
+                        <td class="td-red" style="font-weight:700"
+                            th:text="'$' + ${#numbers.formatDecimal(totalCustomIncome,1,2)}">$0.00</td>
+                        <td colspan="2"></td>
                     </tr>
                 </tfoot>
             </table>
         </div>
+    </div>
 
-    </div><!-- /tab-history -->
+    <!-- ── Recent Work Activity ───────────────────────────────────────────────── -->
+    <div class="section-card" th:if="${!#lists.isEmpty(allEntries)}">
+        <h2>Recent Work Activity</h2>
+        <p class="section-subtitle">Your latest timesheet entries at a glance.</p>
+
+        <div class="hist-table-wrap">
+            <table class="hist-table">
+                <thead>
+                    <tr>
+                        <th>Job</th>
+                        <th>Date</th>
+                        <th>Hours</th>
+                        <th>Earned</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="e, stat : ${allEntries}" th:if="${stat.index < 8}">
+                        <td th:text="${e.jobName != null ? e.jobName : '—'}">—</td>
+                        <td class="td-muted"
+                            th:text="${e.workDate != null ?
+                                #dates.format(e.workDate,'MMM dd, yyyy') : '—'}">—</td>
+                        <td th:text="${#numbers.formatDecimal(e.hoursWorked,1,1)} + ' hrs'">0</td>
+                        <td class="td-red"
+                            th:text="e.earnedAmount != null ?
+                                '$' + ${#numbers.formatDecimal(e.earnedAmount,1,2)} : '—'">—</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div style="text-align:right;margin-top:12px;">
+            <a href="/timesheet?tab=history"
+               style="color:var(--red);font-size:0.88rem;font-weight:600;text-decoration:none;">
+                View full history in Timesheet →
+            </a>
+        </div>
+    </div>
 
 </div><!-- /container -->
 
 <script>
-    // ── Tab switching ──────────────────────────────────────────────────────────
-    function switchTab(name) {
-        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-        document.querySelectorAll('.tab-btn').forEach(b => {
-            b.classList.toggle('active', b.dataset.tab === name);
-        });
-        const panel = document.getElementById('tab-' + name);
-        if (panel) panel.classList.add('active');
-    }
-
-    // ── Add-job panel toggle ───────────────────────────────────────────────────
-    function toggleAddPanel() {
-        const panel = document.getElementById('add-panel');
-        const icon  = document.getElementById('add-btn-icon');
-        const open  = panel.classList.toggle('open');
-        icon.textContent = open ? '✕' : '+';
-        if (open) {
-            setTimeout(() => panel.querySelector('input')?.focus(), 360);
-        }
-    }
-
-    // ── "Log Hours" on a job card → pre-select that job in Log Work ───────────
-    function openLogTab(btn) {
-        const jobId = btn.dataset.jobId;
-        switchTab('log');
-        const sel = document.getElementById('job-select');
-        if (sel) {
-            sel.value = jobId;
-            updatePreview();
-        }
-    }
-
-    // ── Earnings preview ───────────────────────────────────────────────────────
-    function updatePreview() {
-        const sel    = document.getElementById('job-select');
-        const hours  = parseFloat(document.getElementById('hours-input')?.value) || 0;
-        const option = sel?.options[sel.selectedIndex];
-        const wage   = option ? parseFloat(option.dataset.wage) || 0 : 0;
-        const earned = hours * wage;
-
-        const val  = document.getElementById('ep-value');
-        const box  = document.getElementById('earnings-preview');
-        if (val) {
-            val.textContent = '$' + earned.toFixed(2);
-            val.classList.toggle('lit', earned > 0);
-        }
-        if (box) box.classList.toggle('lit', earned > 0);
-    }
-
-    // ── History table totals & filter ─────────────────────────────────────────
-    function filterHistory() {
-        const filter = document.getElementById('hist-filter')?.value || 'all';
-        const rows   = document.querySelectorAll('.hist-row');
-        let totalHours = 0, totalEarned = 0, visible = 0;
-
-        rows.forEach(row => {
-            const match = filter === 'all' || row.dataset.jobId === filter;
-            row.style.display = match ? '' : 'none';
-            if (match) {
-                visible++;
-                // Parse hours from cell text like "4.5 hrs"
-                const hCell = row.cells[2]?.textContent?.replace(' hrs','').trim();
-                totalHours += parseFloat(hCell) || 0;
-                // Parse earned from cell text like "$60.00"
-                const eCell = row.cells[4]?.textContent?.replace('$','').trim();
-                totalEarned += parseFloat(eCell) || 0;
-            }
-        });
-
-        const label = document.getElementById('hist-total-row')?.cells[0];
-        if (label) {
-            label.textContent = visible === rows.length
-                ? 'All ' + visible + ' entries'
-                : visible + ' of ' + rows.length + ' entries';
-        }
-        const hTot = document.getElementById('total-hours-cell');
-        const eTot = document.getElementById('total-earned-cell');
-        if (hTot) hTot.textContent = totalHours.toFixed(1) + ' hrs';
-        if (eTot) eTot.textContent = '$' + totalEarned.toFixed(2);
-    }
-
-    // ── Initialise on page load ────────────────────────────────────────────────
     document.addEventListener('DOMContentLoaded', () => {
-        // Set today as default date in Log Work tab
-        const dateInput = document.getElementById('work-date');
-        if (dateInput && !dateInput.value) {
-            dateInput.value = new Date().toISOString().split('T')[0];
-        }
-
-        // Switch to the correct tab (from flash redirect or URL hint)
-        const tabHint = document.getElementById('active-tab-hint')?.value || 'jobs';
-        switchTab(tabHint);
-
-        // Pre-select job if passed from card click (URL param via selectedJobId)
-        const jobHint = document.getElementById('selected-job-hint')?.value;
-        if (jobHint) {
-            const sel = document.getElementById('job-select');
-            if (sel) { sel.value = jobHint; updatePreview(); }
-        }
-
-        // Compute initial history totals
-        filterHistory();
+        const today = new Date().toISOString().split('T')[0];
+        const d = document.getElementById('custom-date');
+        if (d && !d.value) d.value = today;
     });
 </script>
 <script src="/js/app.js"></script>
