@@ -33,7 +33,6 @@ public class UserDao {
     }
 
     // FIND a user by their email address
-    @SuppressWarnings("unchecked")
     public Optional<User> findByEmail(String email) {
         String sql = "SELECT * FROM users WHERE email = ?";
         return jdbc.query(sql, userRowMapper, email)

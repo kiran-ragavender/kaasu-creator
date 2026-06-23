@@ -25,8 +25,8 @@ public class JobService {
         repository.update(job);
     }
 
-    public void deleteJob(Long id) {
-        repository.deleteById(id);
+    public void deleteJob(Long id, Long userId) {
+        repository.deleteById(id, userId);
     }
 
     public List<Job> getJobsByUser(Long userId) {

@@ -48,9 +48,9 @@ public class JobRepository {
         );
     }
 
-    public void deleteById(Long id) {
-        String sql = "DELETE FROM jobs WHERE id = ?";
-        jdbc.update(sql, id);
+    public void deleteById(Long id, Long userId) {
+        String sql = "DELETE FROM jobs WHERE id = ? AND user_id = ?";
+        jdbc.update(sql, id, userId);
     }
 
     @SuppressWarnings("null")

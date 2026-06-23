@@ -1,7 +1,6 @@
 package kaasu_creator.repository;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -71,11 +70,7 @@ public class TimesheetRepository {
                      "JOIN jobs j ON te.job_id = j.id " +
                      "WHERE te.user_id = ? " +
                      "ORDER BY te.work_date DESC, te.id DESC";
-        try {
-            return jdbc.query(sql, enrichedRowMapper, userId);
-        } catch (Exception e) {
-            return new ArrayList<>();
-        }
+        return jdbc.query(sql, enrichedRowMapper, userId);
     }
 
     public int deleteByIdAndUserId(Long id, Long userId) {
@@ -86,22 +81,14 @@ public class TimesheetRepository {
     public BigDecimal sumEarnedAmountByUserId(Long userId) {
         String sql = "SELECT COALESCE(SUM(te.hours_worked * j.hourly_wage), 0) FROM timesheet_entries te " +
                      "JOIN jobs j ON te.job_id = j.id WHERE te.user_id = ?";
-        try {
-            BigDecimal result = jdbc.queryForObject(sql, BigDecimal.class, userId);
-            return result != null ? result : BigDecimal.ZERO;
-        } catch (Exception e) {
-            return BigDecimal.ZERO;
-        }
+        BigDecimal result = jdbc.queryForObject(sql, BigDecimal.class, userId);
+        return result != null ? result : BigDecimal.ZERO;
     }
 
     public BigDecimal sumHoursWorkedByUserId(Long userId) {
         String sql = "SELECT COALESCE(SUM(hours_worked), 0) FROM timesheet_entries WHERE user_id = ?";
-        try {
-            BigDecimal result = jdbc.queryForObject(sql, BigDecimal.class, userId);
-            return result != null ? result : BigDecimal.ZERO;
-        } catch (Exception e) {
-            return BigDecimal.ZERO;
-        }
+        BigDecimal result = jdbc.queryForObject(sql, BigDecimal.class, userId);
+        return result != null ? result : BigDecimal.ZERO;
     }
 
     public List<kaasu_creator.model.TimesheetJobSummary> findJobSummariesByUserId(Long userId) {
@@ -113,15 +100,11 @@ public class TimesheetRepository {
                      "WHERE te.user_id = ? " +
                      "GROUP BY j.id, j.job_name, j.hourly_wage " +
                      "ORDER BY j.job_name";
-        try {
-            return jdbc.query(sql, (rs, rowNum) -> new kaasu_creator.model.TimesheetJobSummary(
-                rs.getString("job_name"),
-                rs.getBigDecimal("hourly_wage"),
-                rs.getBigDecimal("total_hours"),
-                rs.getBigDecimal("total_earned")
-            ), userId);
-        } catch (Exception e) {
-            return new ArrayList<>();
-        }
+        return jdbc.query(sql, (rs, rowNum) -> new kaasu_creator.model.TimesheetJobSummary(
+            rs.getString("job_name"),
+            rs.getBigDecimal("hourly_wage"),
+            rs.getBigDecimal("total_hours"),
+            rs.getBigDecimal("total_earned")
+        ), userId);
     }
 }

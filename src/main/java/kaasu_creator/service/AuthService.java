@@ -42,13 +42,4 @@ public class AuthService {
         userDao.save(user);
     }
 
-    /**
-     * Authenticate a user by email and password.
-     * Returns the User if credentials are valid, null otherwise.
-     */
-    public User authenticate(String email, String password) {
-        return userDao.findByEmail(email)
-            .filter(user -> passwordEncoder.matches(password, user.getPassword()))
-            .orElse(null);
-    }
 }

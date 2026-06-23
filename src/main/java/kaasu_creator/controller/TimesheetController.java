@@ -119,7 +119,7 @@ public class TimesheetController {
             Long userId = getUserId(authentication);
             var jobOpt = jobService.getJobByIdAndUser(jobId, userId);
             if (jobOpt.isPresent()) {
-                jobService.deleteJob(jobId);
+                jobService.deleteJob(jobId, userId);
                 redirectAttributes.addFlashAttribute("successMessage", "Job deleted.");
             } else {
                 redirectAttributes.addFlashAttribute("errorMessage", "Job not found.");
