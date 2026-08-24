@@ -51,10 +51,24 @@ public class GoalService {
     }
 
     /**
-     * Get all goals for a user.
+     * Get all active (not yet completed) goals for a user.
      */
     public List<Goal> getGoalsByUser(Long userId) {
         return goalDao.findByUserId(userId);
+    }
+
+    /**
+     * Get all completed goals for a user (history).
+     */
+    public List<Goal> getCompletedGoalsByUser(Long userId) {
+        return goalDao.findCompletedByUserId(userId);
+    }
+
+    /**
+     * Mark a goal as completed.
+     */
+    public void completeGoal(Long goalId) {
+        goalDao.markCompleted(goalId);
     }
 
     /**

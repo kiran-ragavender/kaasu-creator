@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Goal History - Kaasu Creator</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <a href="/dashboard" class="navbar-brand">💸 Kaasu Creator</a>
+        <div class="navbar-links">
+            <a href="/dashboard">Dashboard</a>
+            <a href="/income">Income</a>
+            <a href="/budget">Expenses</a>
+            <a href="/ai-roadmap">AI Roadmap</a>
+            <a href="/profile">Profile</a>
+            <a href="/logout" style="color:var(--accent-pink);">Logout</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <a href="/goal" class="back-btn" style="text-decoration:none;display:inline-block;">← Back to Goals</a>
+        <div class="page-header">
+            <span class="ph-icon">📜</span>
+            <h1 class="ph-title">Goal History</h1>
+            <p class="ph-sub">A look back at every savings goal you've completed.</p>
+        </div>
+
+        <div class="card">
+            <h2>🏆 Completed Goals</h2>
+
+            <div th:if="${#lists.isEmpty(completedGoals)}" style="text-align:center;padding:40px;color:var(--text-secondary);">
+                <p>No completed goals yet. Finish a goal to see it here!</p>
+            </div>
+
+            <div th:each="goal : ${completedGoals}" class="mini-card" style="margin-bottom:15px;">
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                    <div>
+                        <h3 th:text="${goal.name}" style="margin:0;">Goal Name</h3>
+                        <p style="color:var(--text-secondary);font-size:0.9rem;margin-top:5px;">
+                            Target: $<span th:text="${goal.targetAmount}">0</span> —
+                            saved $<span th:text="${goal.currentAmount}">0</span>
+                        </p>
+                        <p style="color:var(--text-secondary);font-size:0.85rem;margin-top:5px;">
+                            Deadline was <span th:text="${goal.deadline}">2024-12-31</span> ·
+                            Completed on
+                            <span th:text="${#dates.format(goal.completedAt,'MMM dd, yyyy')}">2024-12-31</span>
+                        </p>
+                    </div>
+                    <span style="font-size:1.8rem;">✅</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Kaasu-chan mascot -->
+    <div class="kaasu-mascot">
+        💁‍♀️
+        <div class="kaasu-speech">
+            <strong>Kaasu-chan:</strong><br>
+            "Look at everything you've already accomplished!"
+        </div>
+    </div>
+</body>
+</html>

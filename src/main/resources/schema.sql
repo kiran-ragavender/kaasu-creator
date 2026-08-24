@@ -56,6 +56,8 @@ CREATE TABLE IF NOT EXISTS goals (
     target_amount  DECIMAL(10,2) NOT NULL,
     current_amount DECIMAL(10,2) DEFAULT 0,
     deadline       DATE          NOT NULL,
+    completed      BOOLEAN   DEFAULT FALSE,
+    completed_at   TIMESTAMP,
     created_at     TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 

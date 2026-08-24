@@ -28,6 +28,8 @@ public class GoalDao {
         rs.getBigDecimal("target_amount"),
         rs.getBigDecimal("current_amount"),
         rs.getDate("deadline").toLocalDate(),
+        rs.getBoolean("completed"),
+        rs.getTimestamp("completed_at"),
         rs.getTimestamp("created_at")
     );
 
@@ -47,10 +49,17 @@ public class GoalDao {
         return keyHolder.getKey().longValue();
     }
 
-    // FIND all goals for a specific user
+    // FIND all active (not yet completed) goals for a specific user
     @SuppressWarnings("unchecked")
     public List<Goal> findByUserId(Long userId) {
-        String sql = "SELECT * FROM goals WHERE user_id = ? ORDER BY created_at DESC";
+        String sql = "SELECT * FROM goals WHERE user_id = ? AND completed = FALSE ORDER BY created_at DESC";
+        return jdbc.query(sql, goalRowMapper, userId);
+    }
+
+    // FIND all completed goals for a specific user (history)
+    @SuppressWarnings("unchecked")
+    public List<Goal> findCompletedByUserId(Long userId) {
+        String sql = "SELECT * FROM goals WHERE user_id = ? AND completed = TRUE ORDER BY completed_at DESC";
         return jdbc.query(sql, goalRowMapper, userId);
     }
 
@@ -76,5 +85,11 @@ public class GoalDao {
     public void addToCurrentAmount(Long goalId, java.math.BigDecimal amountToAdd) {
         String sql = "UPDATE goals SET current_amount = current_amount + ? WHERE id = ?";
         jdbc.update(sql, amountToAdd, goalId);
+    }
+
+    // MARK a goal as completed
+    public void markCompleted(Long goalId) {
+        String sql = "UPDATE goals SET completed = TRUE, completed_at = CURRENT_TIMESTAMP WHERE id = ?";
+        jdbc.update(sql, goalId);
     }
 }

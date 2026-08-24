@@ -12,7 +12,6 @@
             <a href="/dashboard">Dashboard</a>
             <a href="/income">Income</a>
             <a href="/budget">Expenses</a>
-            <a href="/calculator">Calculator</a>
             <a href="/ai-roadmap">AI Roadmap</a>
             <a href="/profile">Profile</a>
             <a href="/logout" style="color:var(--accent-pink);">Logout</a>
@@ -25,6 +24,12 @@
             <span class="ph-icon">🎯</span>
             <h1 class="ph-title">Savings Goals</h1>
             <p class="ph-sub">Set a target, pick a deadline, and get a week-by-week savings roadmap.</p>
+        </div>
+
+        <div style="text-align:right;margin-bottom:16px;">
+            <a href="/goal/history" class="btn btn-secondary" style="text-decoration:none;display:inline-block;">
+                📜 View Goal History
+            </a>
         </div>
 
         <!-- Flash messages -->
@@ -77,6 +82,13 @@
                             <input type="number" step="0.01" name="amount" required placeholder="$$$"
                                    style="width:100px;padding:8px;">
                             <button type="submit" class="btn btn-primary" style="padding:8px 16px;">Add Savings</button>
+                        </form>
+                        <!-- Complete goal form -->
+                        <form th:action="@{/goal/complete}" method="post" style="display:inline;">
+                            <input type="hidden" name="goalId" th:value="${goal.id}">
+                            <button type="submit" class="btn btn-primary"
+                                    style="padding:8px 12px;"
+                                    onclick="return confirm('Mark this goal as completed?')">✓ Complete</button>
                         </form>
                         <!-- Delete goal form -->
                         <form th:action="@{/goal/delete}" method="post" style="display:inline;">

@@ -83,13 +83,132 @@ function renderPieChart(expenses) {
     `).join('');
 }
 
-// ===== CALCULATOR PAGE =====
-// Handle calculator type switching
-function switchCalculator(type) {
-    const sections = document.querySelectorAll('.calc-section');
-    sections.forEach(section => {
-        section.style.display = section.id === `calc-${type}` ? 'block' : 'none';
+// ===== INCOME PAGE =====
+// Line chart plotting monthly income totals (custom income + timesheet earnings)
+// across every month/year present in the user's history.
+const MONTH_NAMES = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+function renderIncomeLineChart(customIncomes, timesheetEntries) {
+    const canvas = document.getElementById('incomeLineChart');
+    if (!canvas) return;
+
+    // Bucket both data sources into "YYYY-MM" -> total
+    const customByMonth = {};
+    (customIncomes || []).forEach(inc => {
+        if (!inc.incomeDate) return;
+        const key = inc.incomeDate.slice(0, 7); // "YYYY-MM"
+        customByMonth[key] = (customByMonth[key] || 0) + Number(inc.amount);
     });
+
+    const timesheetByMonth = {};
+    (timesheetEntries || []).forEach(e => {
+        if (!e.workDate || e.earnedAmount == null) return;
+        const key = e.workDate.slice(0, 7);
+        timesheetByMonth[key] = (timesheetByMonth[key] || 0) + Number(e.earnedAmount);
+    });
+
+    // Union of all months present, sorted chronologically (oldest -> newest)
+    const allMonths = Array.from(new Set([...Object.keys(customByMonth), ...Object.keys(timesheetByMonth)])).sort();
+    if (allMonths.length === 0) return;
+
+    const customSeries    = allMonths.map(m => customByMonth[m]    || 0);
+    const timesheetSeries = allMonths.map(m => timesheetByMonth[m] || 0);
+    const labels = allMonths.map(m => {
+        const [y, mo] = m.split('-');
+        return MONTH_NAMES[parseInt(mo, 10) - 1] + " '" + y.slice(2);
+    });
+
+    const ctx = canvas.getContext('2d');
+    const width = canvas.width;
+    const height = canvas.height;
+    ctx.clearRect(0, 0, width, height);
+
+    const padLeft = 65, padRight = 20, padTop = 20, padBottom = 50;
+    const chartW = width - padLeft - padRight;
+    const chartH = height - padTop - padBottom;
+
+    const maxVal = Math.max(1, ...customSeries, ...timesheetSeries);
+    const niceMax = Math.ceil(maxVal / 5) * 5 || maxVal;
+
+    // Y-axis gridlines + $ labels
+    const ySteps = 5;
+    ctx.font = '11px Segoe UI, sans-serif';
+    ctx.textAlign = 'right';
+    ctx.textBaseline = 'middle';
+    for (let i = 0; i <= ySteps; i++) {
+        const val = (niceMax / ySteps) * i;
+        const y = padTop + chartH - (chartH * (i / ySteps));
+        ctx.strokeStyle = '#2a2a2a';
+        ctx.beginPath();
+        ctx.moveTo(padLeft, y);
+        ctx.lineTo(padLeft + chartW, y);
+        ctx.lineWidth = 1;
+        ctx.stroke();
+        ctx.fillStyle = '#999';
+        ctx.fillText('$' + val.toFixed(0), padLeft - 8, y);
+    }
+
+    // X axis month labels
+    const n = allMonths.length;
+    const stepX = n > 1 ? chartW / (n - 1) : 0;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'top';
+    labels.forEach((label, i) => {
+        const x = padLeft + (n > 1 ? stepX * i : chartW / 2);
+        ctx.fillStyle = '#999';
+        ctx.fillText(label, x, padTop + chartH + 10);
+    });
+
+    // Axes (crossing at the origin, bottom-left of the plot area)
+    ctx.strokeStyle = '#555';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(padLeft, padTop);
+    ctx.lineTo(padLeft, padTop + chartH);
+    ctx.lineTo(padLeft + chartW, padTop + chartH);
+    ctx.stroke();
+
+    // Plot a single series as a connected line with point markers
+    function plotSeries(series, color) {
+        if (n === 0) return;
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        series.forEach((val, i) => {
+            const x = padLeft + (n > 1 ? stepX * i : chartW / 2);
+            const y = padTop + chartH - (val / niceMax) * chartH;
+            if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        });
+        ctx.stroke();
+
+        ctx.fillStyle = color;
+        series.forEach((val, i) => {
+            const x = padLeft + (n > 1 ? stepX * i : chartW / 2);
+            const y = padTop + chartH - (val / niceMax) * chartH;
+            ctx.beginPath();
+            ctx.arc(x, y, 4, 0, 2 * Math.PI);
+            ctx.fill();
+        });
+    }
+
+    plotSeries(timesheetSeries, PIE_COLORS[1]); // timesheet earnings
+    plotSeries(customSeries, PIE_COLORS[0]);    // custom income
+
+    // Legend
+    const legend = document.getElementById('income-line-legend');
+    if (!legend) return;
+    const customTotal    = customSeries.reduce((s, v) => s + v, 0);
+    const timesheetTotal = timesheetSeries.reduce((s, v) => s + v, 0);
+    legend.innerHTML = `
+        <div class="ic-legend-row">
+            <span class="ic-legend-dot" style="background:${PIE_COLORS[0]}"></span>
+            <span>Custom Income: $${customTotal.toFixed(2)}</span>
+        </div>
+        <div class="ic-legend-row">
+            <span class="ic-legend-dot" style="background:${PIE_COLORS[1]}"></span>
+            <span>Timesheet Earnings: $${timesheetTotal.toFixed(2)}</span>
+        </div>
+    `;
 }
 
 // ===== GOAL PAGE =====

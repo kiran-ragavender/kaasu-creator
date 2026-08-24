@@ -74,6 +74,28 @@ public class GoalController {
         return "redirect:/goal";
     }
 
+    @PostMapping("/goal/complete")
+    public String completeGoal(Authentication authentication,
+                               @RequestParam Long goalId,
+                               RedirectAttributes redirectAttributes) {
+        Long userId = getUserId(authentication);
+        Goal goal = goalService.getGoalById(goalId);
+        if (goal == null || !goal.getUserId().equals(userId)) {
+            redirectAttributes.addFlashAttribute("error", "Goal not found.");
+            return "redirect:/goal";
+        }
+        goalService.completeGoal(goalId);
+        redirectAttributes.addFlashAttribute("success", "🎉 Goal completed! Check it out in your history.");
+        return "redirect:/goal";
+    }
+
+    @GetMapping("/goal/history")
+    public String showGoalHistory(Authentication authentication, Model model) {
+        Long userId = getUserId(authentication);
+        model.addAttribute("completedGoals", goalService.getCompletedGoalsByUser(userId));
+        return "goal-history";
+    }
+
     @PostMapping("/goal/delete")
     public String deleteGoal(Authentication authentication,
                              @RequestParam Long goalId,

@@ -12,18 +12,28 @@ public class Goal {
     private BigDecimal targetAmount;
     private BigDecimal currentAmount;
     private LocalDate deadline;
+    private boolean completed;
+    private Timestamp completedAt;
     private Timestamp createdAt;
 
     public Goal() {}
 
     public Goal(Long id, Long userId, String name, BigDecimal targetAmount,
                 BigDecimal currentAmount, LocalDate deadline, Timestamp createdAt) {
+        this(id, userId, name, targetAmount, currentAmount, deadline, false, null, createdAt);
+    }
+
+    public Goal(Long id, Long userId, String name, BigDecimal targetAmount,
+                BigDecimal currentAmount, LocalDate deadline, boolean completed,
+                Timestamp completedAt, Timestamp createdAt) {
         this.id = id;
         this.userId = userId;
         this.name = name;
         this.targetAmount = targetAmount;
         this.currentAmount = currentAmount;
         this.deadline = deadline;
+        this.completed = completed;
+        this.completedAt = completedAt;
         this.createdAt = createdAt;
     }
 
@@ -33,6 +43,8 @@ public class Goal {
     public BigDecimal getTargetAmount() { return targetAmount; }
     public BigDecimal getCurrentAmount() { return currentAmount; }
     public LocalDate getDeadline() { return deadline; }
+    public boolean isCompleted() { return completed; }
+    public Timestamp getCompletedAt() { return completedAt; }
     public Timestamp getCreatedAt() { return createdAt; }
 
     public void setId(Long id) { this.id = id; }
@@ -41,6 +53,8 @@ public class Goal {
     public void setTargetAmount(BigDecimal targetAmount) { this.targetAmount = targetAmount; }
     public void setCurrentAmount(BigDecimal currentAmount) { this.currentAmount = currentAmount; }
     public void setDeadline(LocalDate deadline) { this.deadline = deadline; }
+    public void setCompleted(boolean completed) { this.completed = completed; }
+    public void setCompletedAt(Timestamp completedAt) { this.completedAt = completedAt; }
     public void setCreatedAt(Timestamp createdAt) { this.createdAt = createdAt; }
 
     public BigDecimal getProgressPercent() {
