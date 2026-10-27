@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import kaasu_creator.dao.GoalDao;
 import kaasu_creator.dao.RoadmapDao;
@@ -34,7 +35,9 @@ public class GoalService {
 
     /**
      * Create a new savings goal and generate a roadmap for it.
+     * Transactional so a failed roadmap insert doesn't leave a goal without one.
      */
+    @Transactional
     public Goal createGoal(Long userId, String name, BigDecimal targetAmount, LocalDate deadline) {
         Goal goal = new Goal(null, userId, name, targetAmount, BigDecimal.ZERO, deadline, null);
         Long id = goalDao.save(goal);
@@ -134,12 +137,5 @@ public class GoalService {
      */
     public void deleteGoal(Long goalId) {
         goalDao.deleteById(goalId);
-    }
-
-    /**
-     * Mark a roadmap week as completed.
-     */
-    public void completeWeek(Long roadmapId) {
-        roadmapDao.updateStatus(roadmapId, "completed");
     }
 }

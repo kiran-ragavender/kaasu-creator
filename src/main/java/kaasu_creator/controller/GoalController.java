@@ -2,6 +2,7 @@ package kaasu_creator.controller;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -47,12 +48,26 @@ public class GoalController {
                              @RequestParam String deadline,
                              RedirectAttributes redirectAttributes) {
         Long userId = getUserId(authentication);
-        LocalDate deadlineDate = LocalDate.parse(deadline);
+        if (name == null || name.isBlank()) {
+            redirectAttributes.addFlashAttribute("error", "Goal name is required.");
+            return "redirect:/goal";
+        }
+        if (targetAmount == null || targetAmount.compareTo(BigDecimal.ZERO) <= 0) {
+            redirectAttributes.addFlashAttribute("error", "Target amount must be greater than zero.");
+            return "redirect:/goal";
+        }
+        LocalDate deadlineDate;
+        try {
+            deadlineDate = LocalDate.parse(deadline);
+        } catch (DateTimeParseException e) {
+            redirectAttributes.addFlashAttribute("error", "Please enter a valid deadline.");
+            return "redirect:/goal";
+        }
         if (!deadlineDate.isAfter(LocalDate.now())) {
             redirectAttributes.addFlashAttribute("error", "Deadline must be a future date.");
             return "redirect:/goal";
         }
-        Goal goal = goalService.createGoal(userId, name, targetAmount, deadlineDate);
+        Goal goal = goalService.createGoal(userId, name.trim(), targetAmount, deadlineDate);
         redirectAttributes.addFlashAttribute("success",
             "Goal created! " + goal.getName() + " - roadmap generated.");
         return "redirect:/goal";
@@ -67,6 +82,14 @@ public class GoalController {
         Goal goal = goalService.getGoalById(goalId);
         if (goal == null || !goal.getUserId().equals(userId)) {
             redirectAttributes.addFlashAttribute("error", "Goal not found.");
+            return "redirect:/goal";
+        }
+        if (goal.isCompleted()) {
+            redirectAttributes.addFlashAttribute("error", "This goal is already completed.");
+            return "redirect:/goal";
+        }
+        if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
+            redirectAttributes.addFlashAttribute("error", "Savings amount must be greater than zero.");
             return "redirect:/goal";
         }
         goalService.addSavings(goalId, amount);

@@ -34,3 +34,6 @@ build/
 
 ### Local secrets ###
 src/main/resources/application-local.properties
+
+### JVM crash dumps ###
+hs_err_pid*.log

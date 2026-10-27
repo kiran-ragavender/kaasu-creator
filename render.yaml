@@ -1,19 +1,19 @@
 services:
   - type: web
     name: kaasu-creator
-    runtime: java
-    buildCommand: chmod +x mvnw && ./mvnw clean package -DskipTests
-    startCommand: java -Xmx400m -Xms128m -jar target/kaasu-creator-0.0.1-SNAPSHOT.jar
+    # Render has no native Java runtime, so build from the Dockerfile
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    healthCheckPath: /login
     envVars:
-      - key: JAVA_VERSION
-        value: "25"
       - key: DATABASE_URL
         value: jdbc:postgresql://aws-1-us-east-1.pooler.supabase.com:5432/postgres?sslmode=require&connectTimeout=60&socketTimeout=60
       - key: DATABASE_USERNAME
         value: postgres.plqgzkbkowfzcyuzefop
       - key: DATABASE_PASSWORD
         sync: false
-      - key: GEMINI_API_KEY
+      - key: OPENAI_API_KEY
         sync: false
       - key: THYMELEAF_CACHE
         value: "true"

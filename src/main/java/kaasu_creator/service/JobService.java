@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import kaasu_creator.model.Job;
 import kaasu_creator.repository.JobRepository;
@@ -25,12 +26,9 @@ public class JobService {
         repository.update(job);
     }
 
+    @Transactional
     public void deleteJob(Long id, Long userId) {
         repository.deleteById(id, userId);
-    }
-
-    public List<Job> getJobsByUser(Long userId) {
-        return repository.findByUserId(userId);
     }
 
     public List<Job> getJobsWithSummary(Long userId) {

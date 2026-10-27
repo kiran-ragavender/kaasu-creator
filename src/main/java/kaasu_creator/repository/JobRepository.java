@@ -49,14 +49,10 @@ public class JobRepository {
     }
 
     public void deleteById(Long id, Long userId) {
-        String sql = "DELETE FROM jobs WHERE id = ? AND user_id = ?";
-        jdbc.update(sql, id, userId);
-    }
-
-    @SuppressWarnings("null")
-    public List<Job> findByUserId(Long userId) {
-        String sql = "SELECT * FROM jobs WHERE user_id = ? ORDER BY created_at DESC";
-        return jdbc.query(sql, rowMapper, userId);
+        // Remove the job's entries first; the FK is ON DELETE SET NULL, which would
+        // otherwise leave orphaned entries that vanish from history but still count as hours
+        jdbc.update("DELETE FROM timesheet_entries WHERE job_id = ? AND user_id = ?", id, userId);
+        jdbc.update("DELETE FROM jobs WHERE id = ? AND user_id = ?", id, userId);
     }
 
     /**

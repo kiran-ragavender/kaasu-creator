@@ -112,7 +112,7 @@ public class IncomeController {
                     amount.setScale(2, java.math.RoundingMode.HALF_UP) + ")");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage",
-                    "Error saving income: " + e.getMessage());
+                    "Error saving income. Please try again.");
         }
         return "redirect:/income";
     }
@@ -133,7 +133,7 @@ public class IncomeController {
             }
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage",
-                    "Error deleting income: " + e.getMessage());
+                    "Error deleting income. Please try again.");
         }
         return "redirect:/income";
     }
@@ -175,7 +175,7 @@ public class IncomeController {
             redirectAttributes.addFlashAttribute("successMessage", "Extra income saved!");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage",
-                    "Error saving extra income: " + e.getMessage());
+                    "Error saving extra income. Please try again.");
         }
         return "redirect:/income";
     }

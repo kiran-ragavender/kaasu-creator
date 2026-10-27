@@ -1,15 +1,18 @@
 package kaasu_creator.controller;
 
 import org.springframework.security.core.Authentication;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import kaasu_creator.dao.UserDao;
 import kaasu_creator.service.BudgetService;
 import kaasu_creator.service.IncomeService;
+import kaasu_creator.service.TimesheetService;
 
 /**
  * DashboardController - the main hub of the app.
@@ -20,11 +23,14 @@ public class DashboardController {
     private final UserDao userDao;
     private final BudgetService budgetService;
     private final IncomeService incomeService;
+    private final TimesheetService timesheetService;
 
-    public DashboardController(UserDao userDao, BudgetService budgetService, IncomeService incomeService) {
+    public DashboardController(UserDao userDao, BudgetService budgetService,
+                               IncomeService incomeService, TimesheetService timesheetService) {
         this.userDao = userDao;
         this.budgetService = budgetService;
         this.incomeService = incomeService;
+        this.timesheetService = timesheetService;
     }
 
     @GetMapping("/dashboard")
@@ -41,7 +47,9 @@ public class DashboardController {
             }
 
             Long userId = user.getId();
-            var totalIncome = incomeService.getTotalIncome(userId);
+            // Custom income + timesheet earnings, matching the Income page
+            var totalIncome = incomeService.getTotalIncome(userId)
+                                           .add(timesheetService.getTotalEarned(userId));
             var totalExpenses = budgetService.getTotalExpenses(userId);
             var currentBalance = totalIncome.subtract(totalExpenses);
 
@@ -61,10 +69,12 @@ public class DashboardController {
     }
 
     @PostMapping("/dashboard/delete-account")
-    public String deleteAccount(Authentication authentication, RedirectAttributes redirectAttributes) {
-        String email = authentication.getName();
-        userDao.deleteByEmail(email);
-        redirectAttributes.addFlashAttribute("message", "Account deleted successfully.");
+    public String deleteAccount(Authentication authentication,
+                                HttpServletRequest request,
+                                HttpServletResponse response) {
+        userDao.deleteByEmail(authentication.getName());
+        // End the session so the deleted user isn't left logged in
+        new SecurityContextLogoutHandler().logout(request, response, authentication);
         return "redirect:/login?deleted";
     }
 }

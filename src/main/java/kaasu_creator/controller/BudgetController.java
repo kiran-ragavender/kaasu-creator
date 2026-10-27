@@ -45,8 +45,16 @@ public class BudgetController {
                              @RequestParam String category,
                              @RequestParam BigDecimal amount,
                              RedirectAttributes redirectAttributes) {
+        if (title == null || title.isBlank()) {
+            redirectAttributes.addFlashAttribute("error", "Expense title is required.");
+            return "redirect:/budget";
+        }
+        if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
+            redirectAttributes.addFlashAttribute("error", "Amount must be greater than zero.");
+            return "redirect:/budget";
+        }
         Long userId = getUserId(authentication);
-        budgetService.addExpense(userId, title, category, amount);
+        budgetService.addExpense(userId, title.trim(), category, amount);
         redirectAttributes.addFlashAttribute("success", "Expense added!");
         return "redirect:/budget";
     }

@@ -73,23 +73,4 @@ public class IncomeDao {
             return BigDecimal.ZERO;
         }
     }
-
-    @SuppressWarnings("null")
-    public List<Income> findExtraByUserId(Long userId) {
-        String sql = "SELECT * FROM incomes WHERE user_id = ? AND income_type = ? ORDER BY income_date DESC, id DESC";
-        try {
-            return jdbc.query(sql, incomeRowMapper, userId, EXTRA_INCOME_TYPE);
-        } catch (Exception e) {
-            return new ArrayList<>();
-        }
-    }
-
-    public BigDecimal sumExtraByUserId(Long userId) {
-        String sql = "SELECT COALESCE(SUM(amount), 0) FROM incomes WHERE user_id = ? AND income_type = ?";
-        try {
-            return jdbc.queryForObject(sql, BigDecimal.class, userId, EXTRA_INCOME_TYPE);
-        } catch (Exception e) {
-            return BigDecimal.ZERO;
-        }
-    }
 }

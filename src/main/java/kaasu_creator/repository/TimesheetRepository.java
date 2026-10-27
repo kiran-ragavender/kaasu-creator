@@ -19,17 +19,6 @@ public class TimesheetRepository {
     }
 
     @SuppressWarnings("null")
-    private final RowMapper<TimesheetEntry> rowMapper = (rs, rowNum) -> new TimesheetEntry(
-        rs.getLong("id"),
-        rs.getLong("user_id"),
-        rs.getObject("job_id", Long.class),
-        rs.getDate("work_date"),
-        rs.getBigDecimal("hours_worked"),
-        rs.getString("notes"),
-        rs.getTimestamp("created_at")
-    );
-
-    @SuppressWarnings("null")
     private final RowMapper<TimesheetEntry> enrichedRowMapper = (rs, rowNum) -> {
         BigDecimal hours = rs.getBigDecimal("hours_worked");
         BigDecimal wage = rs.getBigDecimal("hourly_wage");
@@ -86,25 +75,10 @@ public class TimesheetRepository {
     }
 
     public BigDecimal sumHoursWorkedByUserId(Long userId) {
-        String sql = "SELECT COALESCE(SUM(hours_worked), 0) FROM timesheet_entries WHERE user_id = ?";
+        // JOIN jobs so totals match history/earnings (skips legacy orphaned entries)
+        String sql = "SELECT COALESCE(SUM(te.hours_worked), 0) FROM timesheet_entries te " +
+                     "JOIN jobs j ON te.job_id = j.id WHERE te.user_id = ?";
         BigDecimal result = jdbc.queryForObject(sql, BigDecimal.class, userId);
         return result != null ? result : BigDecimal.ZERO;
-    }
-
-    public List<kaasu_creator.model.TimesheetJobSummary> findJobSummariesByUserId(Long userId) {
-        String sql = "SELECT j.job_name, j.hourly_wage, " +
-                     "COALESCE(SUM(te.hours_worked), 0) AS total_hours, " +
-                     "COALESCE(SUM(te.hours_worked * j.hourly_wage), 0) AS total_earned " +
-                     "FROM timesheet_entries te " +
-                     "JOIN jobs j ON te.job_id = j.id " +
-                     "WHERE te.user_id = ? " +
-                     "GROUP BY j.id, j.job_name, j.hourly_wage " +
-                     "ORDER BY j.job_name";
-        return jdbc.query(sql, (rs, rowNum) -> new kaasu_creator.model.TimesheetJobSummary(
-            rs.getString("job_name"),
-            rs.getBigDecimal("hourly_wage"),
-            rs.getBigDecimal("total_hours"),
-            rs.getBigDecimal("total_earned")
-        ), userId);
     }
 }

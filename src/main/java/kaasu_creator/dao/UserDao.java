@@ -52,10 +52,4 @@ public class UserDao {
         String sql = "DELETE FROM users WHERE email = ?";
         jdbc.update(sql, email);
     }
-
-    // DELETE a user by ID
-    public void deleteById(Long id) {
-        String sql = "DELETE FROM users WHERE id = ?";
-        jdbc.update(sql, id);
-    }
 }

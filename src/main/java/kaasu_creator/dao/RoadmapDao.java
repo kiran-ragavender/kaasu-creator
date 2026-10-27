@@ -26,12 +26,6 @@ public class RoadmapDao {
         rs.getString("status")
     );
 
-    // INSERT a new roadmap entry
-    public void save(Roadmap roadmap) {
-        String sql = "INSERT INTO roadmaps (goal_id, week_number, target_amount, status) VALUES (?, ?, ?, ?)";
-        jdbc.update(sql, roadmap.getGoalId(), roadmap.getWeekNumber(), roadmap.getTargetAmount(), roadmap.getStatus());
-    }
-
     // SAVE multiple roadmap entries at once (used when generating a full roadmap)
     public void saveAll(List<Roadmap> roadmaps) {
         String sql = "INSERT INTO roadmaps (goal_id, week_number, target_amount, status) VALUES (?, ?, ?, ?)";
@@ -45,11 +39,5 @@ public class RoadmapDao {
     public List<Roadmap> findByGoalId(Long goalId) {
         String sql = "SELECT * FROM roadmaps WHERE goal_id = ? ORDER BY week_number ASC";
         return jdbc.query(sql, roadmapRowMapper, goalId);
-    }
-
-    // UPDATE the status of a roadmap entry (pending -> completed)
-    public void updateStatus(Long roadmapId, String status) {
-        String sql = "UPDATE roadmaps SET status = ? WHERE id = ?";
-        jdbc.update(sql, status, roadmapId);
     }
 }

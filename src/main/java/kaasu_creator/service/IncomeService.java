@@ -29,15 +29,7 @@ public class IncomeService {
         return incomeDao.findByUserId(userId);
     }
 
-    public List<Income> getExtraIncomesByUser(Long userId) {
-        return incomeDao.findExtraByUserId(userId);
-    }
-
     public BigDecimal getTotalIncome(Long userId) {
         return incomeDao.sumByUserId(userId);
-    }
-
-    public BigDecimal getTotalExtraIncome(Long userId) {
-        return incomeDao.sumExtraByUserId(userId);
     }
 }

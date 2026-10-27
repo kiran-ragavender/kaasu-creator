@@ -36,8 +36,4 @@ public class TimesheetService {
     public BigDecimal getTotalHours(Long userId) {
         return repository.sumHoursWorkedByUserId(userId);
     }
-
-    public List<kaasu_creator.model.TimesheetJobSummary> getJobSummariesByUser(Long userId) {
-        return repository.findJobSummariesByUserId(userId);
-    }
 }

@@ -102,7 +102,7 @@ public class TimesheetController {
                         "Job '" + jobName.trim() + "' added successfully!");
             }
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Error saving job: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("errorMessage", "Error saving job. Please try again.");
         }
 
         redirectAttributes.addFlashAttribute("activeTab", "jobs");
@@ -125,7 +125,7 @@ public class TimesheetController {
                 redirectAttributes.addFlashAttribute("errorMessage", "Job not found.");
             }
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Error deleting job: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("errorMessage", "Error deleting job. Please try again.");
         }
         redirectAttributes.addFlashAttribute("activeTab", "jobs");
         return "redirect:/timesheet";
@@ -142,6 +142,12 @@ public class TimesheetController {
             RedirectAttributes redirectAttributes) {
         try {
             Long userId = getUserId(authentication);
+
+            if (hoursWorked == null || hoursWorked.compareTo(BigDecimal.ZERO) <= 0) {
+                redirectAttributes.addFlashAttribute("errorMessage", "Hours worked must be greater than zero.");
+                redirectAttributes.addFlashAttribute("activeTab", "log");
+                return "redirect:/timesheet";
+            }
 
             var jobOpt = jobService.getJobByIdAndUser(jobId, userId);
             if (jobOpt.isEmpty()) {
@@ -166,7 +172,7 @@ public class TimesheetController {
             redirectAttributes.addFlashAttribute("activeTab", "history");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage",
-                    "Error saving entry: " + e.getMessage());
+                    "Error saving entry. Please try again.");
             redirectAttributes.addFlashAttribute("activeTab", "log");
         }
         return "redirect:/timesheet";
@@ -187,7 +193,7 @@ public class TimesheetController {
                 redirectAttributes.addFlashAttribute("errorMessage", "Entry not found.");
             }
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Error deleting entry: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("errorMessage", "Error deleting entry. Please try again.");
         }
         redirectAttributes.addFlashAttribute("activeTab", "history");
         return "redirect:/timesheet";
@@ -247,7 +253,7 @@ public class TimesheetController {
             }
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage",
-                    "Error saving entries: " + e.getMessage());
+                    "Error saving entries. Please try again.");
         }
 
         return "redirect:/timesheet";
@@ -268,7 +274,7 @@ public class TimesheetController {
                 redirectAttributes.addFlashAttribute("successMessage", "Entry deleted.");
             }
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Error deleting entry: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("errorMessage", "Error deleting entry. Please try again.");
         }
         redirectAttributes.addFlashAttribute("activeTab", "history");
         return "redirect:/timesheet";

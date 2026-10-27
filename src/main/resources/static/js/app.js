@@ -14,6 +14,16 @@ function showAlert(message, type = 'success') {
     setTimeout(() => alertDiv.remove(), 4000);
 }
 
+// Escape user/AI-supplied text before inserting it with innerHTML
+function escapeHtml(str) {
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
 // ===== BUDGET PAGE =====
 // Pie chart for expense categories
 const PIE_COLORS = [
@@ -76,7 +86,7 @@ function renderPieChart(expenses) {
     legend.innerHTML = entries.map(([cat, amt], i) => `
         <div class="b-legend-row">
             <span class="b-legend-dot" style="background:${PIE_COLORS[i % PIE_COLORS.length]}"></span>
-            <span class="b-legend-cat">${cat}</span>
+            <span class="b-legend-cat">${escapeHtml(cat)}</span>
             <span class="b-legend-pct">${((amt / grand) * 100).toFixed(0)}%</span>
             <span class="b-legend-amt">$${amt.toFixed(2)}</span>
         </div>

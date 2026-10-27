@@ -75,12 +75,6 @@ public class GoalDao {
         jdbc.update("DELETE FROM goals WHERE id = ?", goalId);
     }
 
-    // UPDATE the current_amount of a goal (when user adds savings)
-    public void updateCurrentAmount(Long goalId, java.math.BigDecimal newAmount) {
-        String sql = "UPDATE goals SET current_amount = ? WHERE id = ?";
-        jdbc.update(sql, newAmount, goalId);
-    }
-
     // UPDATE the current_amount incrementally
     public void addToCurrentAmount(Long goalId, java.math.BigDecimal amountToAdd) {
         String sql = "UPDATE goals SET current_amount = current_amount + ? WHERE id = ?";
